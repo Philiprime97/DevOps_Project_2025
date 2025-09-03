@@ -42,6 +42,11 @@ aws-resource-viewer/
 ---
 
 ## 🚀 Setup Instructions
+### 1. Python Virtual Environment Setup
+**Create a virtual environment:**
+```bash
+python3 -m venv myvenv
+```
 
 ### 1. Set AWS Credentials
 
