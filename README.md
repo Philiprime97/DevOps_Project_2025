@@ -95,27 +95,21 @@ Access the app at : http://localhost:5001
 - Type (t2.micro, etc.)
 - Public IP
 
-✅ VPCs
-VPC ID
+### ✅ VPCs
+- VPC ID
+- CIDR Block
 
-CIDR Block
+### ✅ Subnets
+- Subnet ID
+- VPC ID
+- CIDR Block
+- Availability Zone
 
-✅ Subnets
-Subnet ID
+### ✅ Load Balancers
+- Name
+- DNS Name
 
-VPC ID
-
-CIDR Block
-
-Availability Zone
-
-✅ Load Balancers
-Name
-
-DNS Name
-
-✅ AMIs
-AMI ID
-
-Name
+### ✅ AMIs
+- AMI ID
+- Name
 
