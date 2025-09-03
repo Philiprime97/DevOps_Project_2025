@@ -20,15 +20,14 @@ The app is fully containerized using **Docker** for easy deployment and portabil
 
 ## 📁 Project Structure
 
+```
 aws-resource-viewer/
 ├── Dockerfile # Dockerfile for containerization
 ├── requirements.txt # Python dependencies
 ├── app.py # Flask app main script
 └── static/
 └── docker.svg # Example image displayed in the app
-
-yaml
-Copy code
+```
 
 ---
 
@@ -43,8 +42,22 @@ Copy code
 ---
 
 ## 🚀 Setup Instructions
+### 1. Python Virtual Environment Setup
+**Create a virtual environment:**
+```bash
+python3 -m venv myvenv
+```
+**Activate the virtual environment:**
+```bash
+source myvenv/bin/activate
+```
+**Install required Python packages:**
+```bash
+pip install -r requirements.txt
+```
+Note: `requirements.txt` should include packages like `Flask` and `boto3`
 
-### 1. Set AWS Credentials
+### 2. Set AWS Credentials
 
 Before running the app, set your AWS credentials as environment variables:
 
@@ -53,11 +66,12 @@ Before running the app, set your AWS credentials as environment variables:
 export AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY_ID"
 export AWS_SECRET_ACCESS_KEY="YOUR_SECRET_ACCESS_KEY"
 export AWS_DEFAULT_REGION="YOUR_DEFAULT_REGION"
-2. Docker Setup
-Dockerfile
+```
 
-dockerfile
-Copy code
+### 3. Docker Setup
+**Dockerfile**
+
+```Copy code
 FROM python:3.11-slim
 WORKDIR /app
 COPY requirements.txt .
@@ -65,57 +79,52 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY . .
 EXPOSE 5001
 CMD ["python", "app.py"]
-3. Build and Run Docker Container
-Build the Docker Image
+```
 
-bash
-Copy code
+### 4. Build and Run Docker Container
+**Build the Docker Image**
+```bash
 docker build -t myawsapp .
-Run the Container
+```
 
-bash
-Copy code
+**Run the Container**
+```bash
 docker run -it --name awscontainer \
   -p 5001:5001 \
   -e AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY_ID" \
   -e AWS_SECRET_ACCESS_KEY="YOUR_SECRET_ACCESS_KEY" \
   -e AWS_DEFAULT_REGION="YOUR_DEFAULT_REGION" \
   myawsapp
-Access the app at http://localhost:5001
+```
+**Open a Browser and Enter**
+```bash
+Access the app at : http://localhost:5001
+```
+---
 
-🖥️ Features
-✅ EC2 Instances
-Instance ID
+## 🖥️ Features
+### EC2 Instances
+  - Instance ID
+  - Name tag
+  - State (running, stopped)
+  - Type (t2.micro, etc.)
+  - Public IP
 
-Name tag
+### VPCs
+- VPC ID
+- CIDR Block
 
-State (running, stopped)
+### Subnets
+- Subnet ID
+- VPC ID
+- CIDR Block
+- Availability Zone
 
-Type (t2.micro, etc.)
+### Load Balancers
+- Name
+- DNS Name
 
-Public IP
-
-✅ VPCs
-VPC ID
-
-CIDR Block
-
-✅ Subnets
-Subnet ID
-
-VPC ID
-
-CIDR Block
-
-Availability Zone
-
-✅ Load Balancers
-Name
-
-DNS Name
-
-✅ AMIs
-AMI ID
-
-Name
+### AMIs
+- AMI ID
+- Name
 
