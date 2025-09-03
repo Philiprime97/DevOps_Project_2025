@@ -87,17 +87,13 @@ docker run -it --name awscontainer \
 Access the app at : http://localhost:5001
 ```
 
-🖥️ Features
-✅ EC2 Instances
-Instance ID
-
-Name tag
-
-State (running, stopped)
-
-Type (t2.micro, etc.)
-
-Public IP
+## 🖥️ Features
+### ✅ EC2 Instances
+- Instance ID
+- Name tag
+- State (running, stopped)
+- Type (t2.micro, etc.)
+- Public IP
 
 ✅ VPCs
 VPC ID
