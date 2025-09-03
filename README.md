@@ -76,7 +76,6 @@ docker build -t myawsapp .
 
 **Run the Container**
 
-
 ```bash
 docker run -it --name awscontainer \
   -p 5001:5001 \
