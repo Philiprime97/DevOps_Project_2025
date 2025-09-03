@@ -103,28 +103,28 @@ Access the app at : http://localhost:5001
 ---
 
 ## 🖥️ Features
-### ✅ EC2 Instances
-  - `Instance ID`
+### EC2 Instances
+  - Instance ID
   - Name tag
   - State (running, stopped)
   - Type (t2.micro, etc.)
   - Public IP
 
-### ✅ VPCs
+### VPCs
 - VPC ID
 - CIDR Block
 
-### ✅ Subnets
+### Subnets
 - Subnet ID
 - VPC ID
 - CIDR Block
 - Availability Zone
 
-### ✅ Load Balancers
+### Load Balancers
 - Name
 - DNS Name
 
-### ✅ AMIs
+### AMIs
 - AMI ID
 - Name
 
