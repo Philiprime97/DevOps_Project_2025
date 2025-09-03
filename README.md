@@ -84,7 +84,7 @@ docker run -it --name awscontainer \
 ```
 **Open a Browser and Enter**
 ```bash
-Access the app at http://localhost:5001
+Access the app at : http://localhost:5001
 ```
 
 🖥️ Features
