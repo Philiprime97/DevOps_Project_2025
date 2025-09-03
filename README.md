@@ -104,7 +104,7 @@ Access the app at : http://localhost:5001
 
 ## 🖥️ Features
 ### ✅ EC2 Instances
-  - Instance ID
+  - `Instance ID`
   - Name tag
   - State (running, stopped)
   - Type (t2.micro, etc.)
