@@ -55,7 +55,7 @@ source myvenv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
-Note: 'requirements.txt' should include packages like 'Flask' and 'boto3'
+Note: `requirements.txt` should include packages like `Flask` and `boto3`
 
 ### 2. Set AWS Credentials
 
