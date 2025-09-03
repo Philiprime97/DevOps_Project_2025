@@ -20,12 +20,14 @@ The app is fully containerized using **Docker** for easy deployment and portabil
 
 ## 📁 Project Structure
 
+```
 aws-resource-viewer/
 ├── Dockerfile # Dockerfile for containerization
 ├── requirements.txt # Python dependencies
 ├── app.py # Flask app main script
 └── static/
 └── docker.svg # Example image displayed in the app
+```
 
 yaml
 Copy code
