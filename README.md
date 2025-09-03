@@ -69,13 +69,11 @@ CMD ["python", "app.py"]
 
 ### 3. Build and Run Docker Container
 **Build the Docker Image**
-
 ```bash
 docker build -t myawsapp .
 ```
 
 **Run the Container**
-
 ```bash
 docker run -it --name awscontainer \
   -p 5001:5001 \
@@ -84,8 +82,10 @@ docker run -it --name awscontainer \
   -e AWS_DEFAULT_REGION="YOUR_DEFAULT_REGION" \
   myawsapp
 ```
-
+**Open a Browser and Enter**
+```bash
 Access the app at http://localhost:5001
+```
 
 🖥️ Features
 ✅ EC2 Instances
