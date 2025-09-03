@@ -55,7 +55,7 @@ export AWS_DEFAULT_REGION="YOUR_DEFAULT_REGION"
 ```
 
 ### 2. Docker Setup
-Dockerfile
+**Dockerfile**
 
 ```Copy code
 FROM python:3.11-slim
@@ -68,21 +68,24 @@ CMD ["python", "app.py"]
 ```
 
 ### 3. Build and Run Docker Container
-Build the Docker Image
+**Build the Docker Image**
 
-bash
-Copy code
+```bash
 docker build -t myawsapp .
-Run the Container
+```
 
-bash
-Copy code
+**Run the Container**
+
+
+```bash
 docker run -it --name awscontainer \
   -p 5001:5001 \
   -e AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY_ID" \
   -e AWS_SECRET_ACCESS_KEY="YOUR_SECRET_ACCESS_KEY" \
   -e AWS_DEFAULT_REGION="YOUR_DEFAULT_REGION" \
   myawsapp
+```
+
 Access the app at http://localhost:5001
 
 🖥️ Features
