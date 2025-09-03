@@ -58,7 +58,7 @@ export AWS_DEFAULT_REGION="YOUR_DEFAULT_REGION"
 Dockerfile
 
 dockerfile
-Copy code
+```Copy code
 FROM python:3.11-slim
 WORKDIR /app
 COPY requirements.txt .
@@ -66,7 +66,9 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY . .
 EXPOSE 5001
 CMD ["python", "app.py"]
-3. Build and Run Docker Container
+```
+
+### 3. Build and Run Docker Container
 Build the Docker Image
 
 bash
