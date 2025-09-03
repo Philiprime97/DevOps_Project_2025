@@ -57,7 +57,6 @@ export AWS_DEFAULT_REGION="YOUR_DEFAULT_REGION"
 ### 2. Docker Setup
 Dockerfile
 
-dockerfile
 ```Copy code
 FROM python:3.11-slim
 WORKDIR /app
