@@ -97,17 +97,27 @@ def home():
                 width: 100%;
             }
 
-            /* Banner image */
-            .logo {
-                text-align: center;
-                margin-bottom: 25px;
+            /* Header */
+            .header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 30px;
             }
 
-            .logo img {
-                max-width: 180px;
+            .header-left img,
+            .header-right img {
+                max-width: 130px;
                 height: auto;
-                border-radius: 15px;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            }
+
+            .header-center h1 {
+                font-size: 2.5em;
+                color: #34495e;
+                margin: 0;
+                border-bottom: 3px solid #2980b9;
+                padding-bottom: 5px;
+                text-align: center;
             }
 
             h1 {
@@ -165,9 +175,13 @@ def home():
             .pending { background-color: #f39c12; }
 
             @media (max-width: 600px) {
-                th, td {
-                    font-size: 0.8em;
-                    padding: 4px 6px;
+                .header {
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                }
+                .header-left, .header-right {
+                    margin: 10px 0;
                 }
             }
         </style>
@@ -175,9 +189,17 @@ def home():
     <body>
     <div class="container">
 
-        <!-- Logo Banner -->
-        <div style="text-align: right; margin-bottom: 5px;">
-            <img src="{{ url_for('static', filename='docker.svg') }}" alt="Docker Logo" style="max-width:200px; height:auto;">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <img src="{{ url_for('static', filename='aws.png') }}" alt="AWS Logo">
+            </div>
+            <div class="header-center">
+                <h1>AWS Resource Viewer</h1>
+            </div>
+            <div class="header-right">
+                <img src="{{ url_for('static', filename='docker.svg') }}" alt="Docker Logo">
+            </div>
         </div>
 
         <h1>Running EC2 Instances</h1>
