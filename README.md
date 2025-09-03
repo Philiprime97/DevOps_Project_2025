@@ -29,9 +29,6 @@ aws-resource-viewer/
 └── docker.svg # Example image displayed in the app
 ```
 
-yaml
-Copy code
-
 ---
 
 ## 🧰 Technologies Used
