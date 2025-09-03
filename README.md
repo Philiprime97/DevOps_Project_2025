@@ -86,6 +86,7 @@ docker run -it --name awscontainer \
 ```bash
 Access the app at : http://localhost:5001
 ```
+---
 
 ## 🖥️ Features
 ### ✅ EC2 Instances
