@@ -128,3 +128,7 @@ Access the app at : http://localhost:5001
 - AMI ID
 - Name
 
+---
+
+## 📸 Output Example
+![AWS Resource Viewer - Output](https://github.com/user-attachments/assets/c3581cb7-be2d-421b-9646-924b7a66a0eb)
