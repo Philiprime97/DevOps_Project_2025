@@ -47,8 +47,17 @@ aws-resource-viewer/
 ```bash
 python3 -m venv myvenv
 ```
+**Activate the virtual environment:**
+```bash
+source myvenv/bin/activate
+```
+**Install required Python packages:**
+```bash
+pip install -r requirements.txt
+```
+--Note: 'requirements.txt' should include packages like 'Flask' and 'boto3'
 
-### 1. Set AWS Credentials
+### 2. Set AWS Credentials
 
 Before running the app, set your AWS credentials as environment variables:
 
@@ -59,7 +68,7 @@ export AWS_SECRET_ACCESS_KEY="YOUR_SECRET_ACCESS_KEY"
 export AWS_DEFAULT_REGION="YOUR_DEFAULT_REGION"
 ```
 
-### 2. Docker Setup
+### 3. Docker Setup
 **Dockerfile**
 
 ```Copy code
@@ -72,7 +81,7 @@ EXPOSE 5001
 CMD ["python", "app.py"]
 ```
 
-### 3. Build and Run Docker Container
+### 4. Build and Run Docker Container
 **Build the Docker Image**
 ```bash
 docker build -t myawsapp .
