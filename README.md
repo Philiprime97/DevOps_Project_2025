@@ -84,8 +84,18 @@ CMD ["python", "app.py"]
 ### 4. Build and Run Docker Container
 **Build the Docker Image**
 ```bash
-docker build -t myawsapp .
+docker build -t awsviewer:v1 .
 ```
+
+**Image push to Docker Hub**
+```bash
+docker login
+docker tag awsviewer:v1 philiprime97/awsviewer:v1
+docker push philiprime97/awsviewer:v1
+```
+
+**Link to the image in Docker Hub**
+https://hub.docker.com/r/philiprime97/awsviewer
 
 **Run the Container**
 ```bash
