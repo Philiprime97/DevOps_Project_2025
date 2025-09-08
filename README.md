@@ -95,7 +95,7 @@ docker push philiprime97/awsviewer:v1
 ```
 
 **Link to the image in Docker Hub**
-https://hub.docker.com/r/philiprime97/awsviewer
+https://hub.docker.com/r/philiprime97/awsviewer/tags
 
 **Run the Container**
 ```bash
