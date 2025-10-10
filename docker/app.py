@@ -10,14 +10,19 @@ AWS_SECRET_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_DEFAULT_REGION = os.getenv("AWS_DEFAULT_REGION")
 
 # Initialize Boto3 clients with try/except
+ec2_client=None
+elb_client=None
 
-session = boto3.Session(
-    aws_access_key_id=AWS_ACCESS_KEY,
-    aws_secret_access_key=AWS_SECRET_KEY,
-    region_name=AWS_DEFAULT_REGION
-)
-ec2_client = session.client("ec2")
-elb_client = session.client("elbv2")
+try:
+    session = boto3.Session(
+        aws_access_key_id=AWS_ACCESS_KEY,
+        aws_secret_access_key=AWS_SECRET_KEY,
+        region_name=AWS_DEFAULT_REGION
+    )
+    ec2_client = session.client("ec2")
+    elb_client = session.client("elbv2")
+except Exception as e:
+    print(f"[WARNING] Failed to initialize AWS clients: {e}")
 
 
 @app.route("/")
