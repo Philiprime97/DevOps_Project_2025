@@ -13,16 +13,20 @@ AWS_DEFAULT_REGION = os.getenv("AWS_DEFAULT_REGION")
 ec2_client=None
 elb_client=None
 
-try:
-    session = boto3.Session(
-        aws_access_key_id=AWS_ACCESS_KEY,
-        aws_secret_access_key=AWS_SECRET_KEY,
-        region_name=AWS_DEFAULT_REGION
-    )
-    ec2_client = session.client("ec2")
-    elb_client = session.client("elbv2")
-except Exception as e:
-    print(f"[WARNING] Failed to initialize AWS clients: {e}")
+if AWS_DEFAULT_REGION:
+    try:
+        session = boto3.Session(
+            aws_access_key_id=AWS_ACCESS_KEY,
+            aws_secret_access_key=AWS_SECRET_KEY,
+            region_name=AWS_DEFAULT_REGION
+        )
+        ec2_client = session.client("ec2")
+        elb_client = session.client("elbv2")
+        print("[INFO] AWS clients initialized")
+    except Exception as e:
+        print(f"[WARNING] Failed to initialize AWS clients: {e}")
+else:
+    print("[INFO] AWS region is not provided. Skipping AWS client initialization")
 
 
 @app.route("/")
