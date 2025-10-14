@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        HARBOR_URL = '192.168.1.179:8081'
+        HARBOR_URL = '192.168.1.179:80'
         HARBOR_PROJECT = 'devops'
         IMAGE_NAME = 'myapp'
         IMAGE_TAG = '1'
