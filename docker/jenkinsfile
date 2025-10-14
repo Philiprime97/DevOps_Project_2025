@@ -5,7 +5,7 @@ pipeline {
         HARBOR_URL = '192.168.1.179:8081'
         HARBOR_PROJECT = 'devops'
         IMAGE_NAME = 'myapp'
-        IMAGE_TAG = "${env.BUILD_NUMBER}"
+        IMAGE_TAG = '1'
     }
 
     stages {
