@@ -36,9 +36,7 @@ pipeline {
         stage('Login to Harbor') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'devops-test', usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
-                    sh """
-                    echo $HARBOR_PASS | docker login ${HARBOR_URL} -u $HARBOR_USER --password-stdin
-                    """
+                    sh 'echo $HARBOR_PASS | docker login 192.168.1.179:80 -u $HARBOR_USER --password-stdin'
                 }
             }
         }
