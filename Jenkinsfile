@@ -4,7 +4,7 @@ pipeline {
     environment {
         HARBOR_URL = '192.168.1.179:80'
         HARBOR_PROJECT = 'devops'
-        IMAGE_NAME = 'myapp'
+        IMAGE_NAME = 'myapp-A is missing'
         IMAGE_TAG = '1'
     }
 
