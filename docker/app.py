@@ -204,7 +204,7 @@ def home():
                 <img src="{{ url_for('static', filename='aws.png') }}" alt="AWS Logo">
             </div>
             <div class="header-center">
-                <h1>WS Resource Viewer</h1>
+                <h1>AWS Resource Viewer</h1>
             </div>
             <div class="header-right">
                 <img src="{{ url_for('static', filename='docker.svg') }}" alt="Docker Logo">
