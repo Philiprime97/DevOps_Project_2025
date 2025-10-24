@@ -45,8 +45,8 @@ podTemplate(
                     EOF
 
                     /kaniko/executor \\
-                        --context=dir://${env.WORKSPACE} \\
-                        --dockerfile=${env.WORKSPACE}/Dockerfile \\
+                        --context=dir://${env.WORKSPACE}/docker \\
+                        --dockerfile=${env.WORKSPACE}/docker/Dockerfile \\
                         --destination=${appimage}:${apptag} \\
                         --force
                     """
