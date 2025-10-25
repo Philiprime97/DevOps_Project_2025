@@ -48,6 +48,8 @@ EOF
                         --context=dir://\$WORKSPACE/docker \\
                         --dockerfile=\$WORKSPACE/docker/Dockerfile \\
                         --destination=${appimage}:${apptag} \\
+                        --insecure \
+                        --skip-tls-verify \
                         --force
                     """
                 }
