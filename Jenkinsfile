@@ -31,22 +31,22 @@ podTemplate(
         stage('Build & Push Docker Image') {
             container('kaniko') {
                 withCredentials([usernamePassword(credentialsId: 'harbor-credentials', usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
-                    sh '''
+                    sh """
                     mkdir -p /kaniko/.docker
-                    cat <<EOF > /kaniko/.docker/config.json
-                    {
-                        "auths": {
-                            "'"${harborUrl}"'": {
-                                "username": "'"${HARBOR_USER}"'",
-                                "password": "'"${HARBOR_PASS}"'"
-                            }
-                        }
-                    }
-                    EOF
+                    cat <<'EOF' > /kaniko/.docker/config.json
+{
+    "auths": {
+        "${harborUrl}": {
+            "username": "\$HARBOR_USER",
+            "password": "\$HARBOR_PASS"
+        }
+    }
+}
+EOF
 
                     /kaniko/executor \\
-                        --context=dir://${env.WORKSPACE}/docker \\
-                        --dockerfile=${env.WORKSPACE}/docker/Dockerfile \\
+                        --context=dir://\$WORKSPACE/docker \\
+                        --dockerfile=\$WORKSPACE/docker/Dockerfile \\
                         --destination=${appimage}:${apptag} \\
                         --force
                     """
