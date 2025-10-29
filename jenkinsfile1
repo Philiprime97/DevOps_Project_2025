@@ -99,7 +99,7 @@ pipeline {
                     docker run --rm \
                       -v $(pwd)/harbor-config:/root/.config/harbor-cli \
                       registry.goharbor.io/harbor-cli/harbor-cli:latest \
-                      artifact get ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} \
+                      artifact view ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} \
                       --output-format yaml > trivy_report.txt
                     '''
                 }
