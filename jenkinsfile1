@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        HARBOR_URL = '192.168.1.179:80'
+        HARBOR_URL = 'http://192.168.1.179:80'
         HARBOR_PROJECT = 'devops'
         IMAGE_NAME = 'myapp-b'
         IMAGE_TAG = '1'
@@ -24,10 +24,12 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh '''
-                cd docker
-                docker build -t ${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} .
-                '''
+                script {
+                    sh """
+                    cd docker &&
+                    docker build -t ${HARBOR_URL.replace('http://', '')}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} .
+                    """
+                }
             }
         }
 
@@ -43,39 +45,51 @@ pipeline {
 
         stage('Push Image to Harbor') {
             steps {
-                sh '''
-                docker push ${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
-                '''
+                script {
+                    sh """
+                    docker push ${HARBOR_URL.replace('http://', '')}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
+                    """
+                }
             }
         }
 
-        stage('Wait before Scan') {
+        stage('Delay Before Scan') {
             steps {
-                echo '⏳ Waiting 10 seconds before starting scan...'
-                sleep(time: 10, unit: 'SECONDS')  //it is a clean Jenkins syntax,Jenkins syntax is safer and clearer in pipeline logs.
+                echo "⏳ Waiting 10 seconds before triggering Harbor scan..."
+                sleep(time: 10, unit: 'SECONDS')
             }
         }
 
-        stage('Scan Image in Harbor with Trivy') {
+        stage('Trigger Harbor Trivy Scan') {
             steps {
+                echo "🔍 Triggering Trivy scan in Harbor..."
                 withCredentials([usernamePassword(credentialsId: 'devops-test', usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                     sh '''
-                    echo "🔍 Triggering Trivy scan in Harbor..."
-                    docker run --rm registry.goharbor.io/harbor-cli/harbor-cli:latest \
-                        --url http://${HARBOR_URL} \
-                        --username $HARBOR_USER \
-                        --password $HARBOR_PASS \
-                        artifact scan trigger ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
+                    docker run --rm \
+                      -e HARBOR_URL="${HARBOR_URL}" \
+                      -e HARBOR_USERNAME="$HARBOR_USER" \
+                      -e HARBOR_PASSWORD="$HARBOR_PASS" \
+                      goharbor/harbor-cli:latest \
+                      artifact scan trigger ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
+                    '''
+                }
+            }
+        }
 
-                    echo "📄 Fetching scan results..."
-                    docker run --rm registry.goharbor.io/harbor-cli/harbor-cli:latest \
-                        --url http://${HARBOR_URL} \
-                        --username $HARBOR_USER \
-                        --password $HARBOR_PASS \
+        stage('Fetch Trivy Scan Report') {
+            steps {
+                echo "📄 Fetching scan results..."
+                withCredentials([usernamePassword(credentialsId: 'devops-test', usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
+                    sh '''
+                    docker run --rm \
+                        -e HARBOR_URL="${HARBOR_URL}" \
+                        -e HARBOR_USERNAME="$HARBOR_USER" \
+                        -e HARBOR_PASSWORD="$HARBOR_PASS" \
+                        goharbor/harbor-cli:latest \
                         artifact scan get ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} > trivy_report.txt
                     '''
                 }
-                // 👇 Save the report
+                // Save the report as Jenkins artifact
                 archiveArtifacts artifacts: 'trivy_report.txt', fingerprint: true
             }
         }
@@ -84,10 +98,10 @@ pipeline {
     post {
         always {
             echo "🧹 Cleaning up local images..."
-            sh "docker rmi ${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} || true"
+            sh "docker rmi ${HARBOR_URL.replace('http://', '')}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} || true"
         }
         success {
-            echo "✅ Image pushed and scanned successfully: ${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
+            echo "✅ Image pushed and scanned successfully in Harbor: ${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
         }
         failure {
             echo "❌ Build failed. Check logs above."
