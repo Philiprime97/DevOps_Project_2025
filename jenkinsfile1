@@ -87,8 +87,8 @@ pipeline {
 
         stage('Wait for Scan Completion') {
             steps {
-                echo "⏳ Waiting 30 seconds for Harbor scan to complete..."
-                sleep(time: 30, unit: 'SECONDS')
+                echo "⏳ Waiting 15 seconds for Harbor scan to complete..."
+                sleep(time: 15, unit: 'SECONDS')
             }
         }
 
