@@ -99,10 +99,10 @@ pipeline {
                     docker run --rm \
                       -v $(pwd)/harbor-config:/root/.config/harbor-cli \
                       registry.goharbor.io/harbor-cli/harbor-cli:latest \
-                      artifact scan get ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} > trivy_report.txt
+                      artifact scan get ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} > trivy1_report.txt
                     '''
                 }
-                archiveArtifacts artifacts: 'trivy_report.txt', fingerprint: true
+                archiveArtifacts artifacts: 'trivy1_report.txt', fingerprint: true
             }
         }
 
