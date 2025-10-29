@@ -63,11 +63,11 @@ pipeline {
         }
 
         stage('Trigger Harbor Trivy Scan') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
-                    sh '''
-                    mkdir -p harbor-config
-                    cat > harbor-config/config.yaml <<EOF
+          steps {
+            withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
+              sh '''
+              mkdir -p harbor-config
+              cat > harbor-config/config.yaml <<EOF
         credential-store:
           jenkins-creds:
             url: "${HARBOR_URL}"
@@ -76,16 +76,15 @@ pipeline {
         current-credential-name: jenkins-creds
         EOF
         
-                    docker run --rm \
-                      -v $(pwd)/harbor-config:/root/.config/harbor-cli \
-                      registry.goharbor.io/harbor-cli/harbor-cli:latest \
-                      artifact scan start ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
-
-                    rm -rf harbor-config
-                    '''
-                }
+              docker run --rm \
+                -v $(pwd)/harbor-config:/root/.config/harbor-cli \
+                registry.goharbor.io/harbor-cli/harbor-cli:latest \
+                artifact scan start ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
+              '''
             }
+          }
         }
+
 
         stage('Wait for Scan Completion') {
             steps {
