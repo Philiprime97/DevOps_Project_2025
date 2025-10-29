@@ -96,7 +96,7 @@ pipeline {
                     sh '''
                     # Get scan status and output to file
                     curl -s -L -u $HARBOR_USER:$HARBOR_PASS \
-                         "http://${HARBOR_URL}/api/v2.0/projects/${HARBOR_PROJECT}/repositories/${IMAGE_NAME}/artifacts/${IMAGE_TAG}/scan" \
+                         "https://${HARBOR_URL}/api/v2.0/projects/${HARBOR_PROJECT}/repositories/${IMAGE_NAME}/artifacts/${IMAGE_TAG}/scan" \
                          -o trivy_report.txt
                     '''
                 }
