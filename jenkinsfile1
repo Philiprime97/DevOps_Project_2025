@@ -6,7 +6,7 @@ pipeline {
         HARBOR_PROJECT   = 'devops'
         IMAGE_NAME       = 'myapp-b'
         IMAGE_TAG        = '1'
-        CREDENTIALS_ID   = 'devops-test'     // 👈 your Jenkins credentials ID here
+        CREDENTIALS_ID   = 'devops-test'  //// 👈 your Jenkins credentials ID here
     }
 
     stages {
@@ -61,7 +61,7 @@ pipeline {
             }
         }
 
-       stage('Trigger Harbor Trivy Scan') {
+        stage('Trigger Harbor Trivy Scan') {
             steps {
                 echo "🔍 Triggering Trivy scan in Harbor..."
                 withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
@@ -74,7 +74,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Fetch Trivy Scan Report') {
             steps {
                 echo "📄 Fetching scan results..."
@@ -86,10 +86,11 @@ pipeline {
                       --username "$HARBOR_USER" --password "$HARBOR_PASS" --url "${HARBOR_URL}" > trivy_report.txt
                     '''
                 }
-                // Save the report in Jenkins
                 archiveArtifacts artifacts: 'trivy_report.txt', fingerprint: true
             }
         }
+
+    } 
 
     post {
         always {
@@ -103,4 +104,5 @@ pipeline {
             echo "❌ Build failed. Check logs above."
         }
     }
-}
+
+} // end of pipeline
