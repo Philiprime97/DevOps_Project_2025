@@ -67,14 +67,12 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                     sh '''
                     mkdir -p harbor-config
-                    cat > harbor-config/config.yaml <<EOF
-                    credential-store:
-                      jenkins-creds:
-                        url: "${HARBOR_URL}"
-                        username: "${HARBOR_USER}"
-                        password: "${HARBOR_PASS}"
-                    current-credential-name: jenkins-creds
-                    EOF
+                    echo "credential-store:" > harbor-config/config.yaml
+                    echo "  jenkins-creds:" >> harbor-config/config.yaml
+                    echo "    url: ${HARBOR_URL}" >> harbor-config/config.yaml
+                    echo "    username: ${HARBOR_USER}" >> harbor-config/config.yaml
+                    echo "    password: ${HARBOR_PASS}" >> harbor-config/config.yaml
+                    echo "current-credential-name: jenkins-creds" >> harbor-config/config.yaml
 
                     docker run --rm \
                       -v $(pwd)/harbor-config:/root/.config/harbor-cli \
@@ -121,5 +119,4 @@ pipeline {
             echo "❌ Build failed. Check logs above."
         }
     }
-
-} // end of pipeline
+}
