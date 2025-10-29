@@ -94,14 +94,13 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                     sh '''
-                    docker run --rm \
-                      -v $(pwd)/harbor-config:/root/.config/harbor-cli \
-                      registry.goharbor.io/harbor-cli/harbor-cli:latest \
-                      artifact view ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} \
-                      --output-format yaml > trivy_report.txt
+                    # Get scan status and output to file
+                    curl -s -u $HARBOR_USER:$HARBOR_PASS \
+                         "http://${HARBOR_URL}/api/v2.0/projects/${HARBOR_PROJECT}/repositories/${IMAGE_NAME}/artifacts/${IMAGE_TAG}/scan" \
+                         -o trivy_report.json
                     '''
                 }
-                archiveArtifacts artifacts: 'trivy_report.txt', fingerprint: true
+                archiveArtifacts artifacts: 'trivy_report.json', fingerprint: true
             }
         }
 
