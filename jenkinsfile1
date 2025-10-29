@@ -6,8 +6,8 @@ pipeline {
         HARBOR_PROJECT   = 'devops'
         IMAGE_NAME       = 'myapp-b'
         IMAGE_TAG        = '1'
-        CREDENTIALS_ID   = 'devops-test' // Jenkins credentials ID
-        CRED_NAME        = 'jenkins-creds' // Harbor CLI credential name
+        CREDENTIALS_ID   = 'devops-test'
+        CRED_NAME        = 'jenkins-creds'
     }
 
     stages {
@@ -77,7 +77,7 @@ pipeline {
                     EOF
 
                     docker run --rm \
-                      -v $(pwd)/harbor-config:/root/.config/harbor \
+                      -v $(pwd)/harbor-config:/root/.config/harbor-cli \
                       registry.goharbor.io/harbor-cli/harbor-cli:latest \
                       artifact scan start ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
                     '''
@@ -97,7 +97,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                     sh '''
                     docker run --rm \
-                      -v $(pwd)/harbor-config:/root/.config/harbor \
+                      -v $(pwd)/harbor-config:/root/.config/harbor-cli \
                       registry.goharbor.io/harbor-cli/harbor-cli:latest \
                       artifact scan get ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} > trivy_report.txt
                     '''
