@@ -61,7 +61,7 @@ pipeline {
             }
         }
 
-        stage('Fetch Harbor Trivy Scan Report') {
+        stage('Trigger Harbor Trivy Scan') {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                     sh '''
@@ -70,7 +70,29 @@ pipeline {
                       -e HARBOR_USERNAME="$HARBOR_USER" \
                       -e HARBOR_PASSWORD="$HARBOR_PASS" \
                       registry.goharbor.io/harbor-cli/harbor-cli:latest \
-                      artifact scan get ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} > trivy_report.txt
+                      harbor artifact scan start ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
+                    '''
+                }
+            }
+        }
+
+        stage('Wait for Scan Completion') {
+            steps {
+                echo "⏳ Waiting 30 seconds for Harbor scan to complete..."
+                sleep(time: 30, unit: 'SECONDS')
+            }
+        }
+
+        stage('Fetch Trivy Scan Report') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
+                    sh '''
+                    docker run --rm \
+                      -e HARBOR_URL="${HARBOR_URL}" \
+                      -e HARBOR_USERNAME="$HARBOR_USER" \
+                      -e HARBOR_PASSWORD="$HARBOR_PASS" \
+                      registry.goharbor.io/harbor-cli/harbor-cli:latest \
+                      harbor artifact scan get ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} > trivy_report.txt
                     '''
                 }
                 archiveArtifacts artifacts: 'trivy_report.txt', fingerprint: true
