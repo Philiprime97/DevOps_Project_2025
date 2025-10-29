@@ -52,7 +52,7 @@ pipeline {
         stage('Wait before Scan') {
             steps {
                 echo '⏳ Waiting 10 seconds before starting scan...'
-                sleep(time: 10, unit: 'SECONDS')  #it is a clean Jenkins syntax,Jenkins syntax is safer and clearer in pipeline logs.
+                sleep(time: 10, unit: 'SECONDS')  //it is a clean Jenkins syntax,Jenkins syntax is safer and clearer in pipeline logs.
             }
         }
 
@@ -75,6 +75,7 @@ pipeline {
                         artifact scan get ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} > trivy_report.txt
                     '''
                 }
+                // 👇 Save the report
                 archiveArtifacts artifacts: 'trivy_report.txt', fingerprint: true
             }
         }
