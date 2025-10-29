@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        HARBOR_URL       = 'http://192.168.1.179:80'
+        HARBOR_URL       = '192.168.1.179:80'
         HARBOR_PROJECT   = 'devops'
         IMAGE_NAME       = 'myapp-b'
         IMAGE_TAG        = '1'
@@ -70,7 +70,7 @@ pipeline {
                       -e HARBOR_URL="${HARBOR_URL}" \
                       -e HARBOR_USERNAME="$HARBOR_USER" \
                       -e HARBOR_PASSWORD="$HARBOR_PASS" \
-                      registry.goharbor.io/harbor/harbor-cli:latest \
+                      registry.goharbor.io/harbor/harbor-cli:v2.8.0 \
                       artifact scan trigger ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
                     '''
                 }
@@ -86,7 +86,7 @@ pipeline {
                         -e HARBOR_URL="${HARBOR_URL}" \
                         -e HARBOR_USERNAME="$HARBOR_USER" \
                         -e HARBOR_PASSWORD="$HARBOR_PASS" \
-                        registry.goharbor.io/harbor/harbor-cli:latest \
+                        registry.goharbor.io/harbor/harbor-cli:v2.8.0 \
                         artifact scan get ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} > trivy_report.txt
                     '''
                 }
