@@ -61,40 +61,35 @@ pipeline {
             }
         }
 
-        stage('Trigger Harbor Trivy Scan') {
+       stage('Trigger Harbor Trivy Scan') {
             steps {
                 echo "🔍 Triggering Trivy scan in Harbor..."
                 withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                     sh '''
                     docker run --rm \
-                      -e HARBOR_URL="${HARBOR_URL}" \
-                      -e HARBOR_USERNAME="$HARBOR_USER" \
-                      -e HARBOR_PASSWORD="$HARBOR_PASS" \
                       registry.goharbor.io/harbor-cli/harbor-cli:latest \
-                      artifact scan start ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
+                      artifact scan start ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} \
+                      --username "$HARBOR_USER" --password "$HARBOR_PASS" --url "${HARBOR_URL}"
                     '''
                 }
             }
         }
-
+        
         stage('Fetch Trivy Scan Report') {
             steps {
                 echo "📄 Fetching scan results..."
                 withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                     sh '''
                     docker run --rm \
-                        -e HARBOR_URL="${HARBOR_URL}" \
-                        -e HARBOR_USERNAME="$HARBOR_USER" \
-                        -e HARBOR_PASSWORD="$HARBOR_PASS" \
-                        registry.goharbor.io/harbor-cli/harbor-cli:latest \
-                        artifact scan get ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} > trivy_report.txt
+                      registry.goharbor.io/harbor-cli/harbor-cli:latest \
+                      artifact scan get ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} \
+                      --username "$HARBOR_USER" --password "$HARBOR_PASS" --url "${HARBOR_URL}" > trivy_report.txt
                     '''
                 }
                 // Save the report in Jenkins
                 archiveArtifacts artifacts: 'trivy_report.txt', fingerprint: true
             }
         }
-    }
 
     post {
         always {
