@@ -68,18 +68,20 @@ pipeline {
                     sh '''
                     mkdir -p harbor-config
                     cat > harbor-config/config.yaml <<EOF
-                    credential-store:
-                      jenkins-creds:
-                        url: ${HARBOR_URL}
-                        username: $HARBOR_USER
-                        password: $HARBOR_PASS
-                    current-credential-name: jenkins-creds
-                    EOF
-
+        credential-store:
+          jenkins-creds:
+            url: "${HARBOR_URL}"
+            username: "$HARBOR_USER"
+            password: "$HARBOR_PASS"
+        current-credential-name: jenkins-creds
+        EOF
+        
                     docker run --rm \
                       -v $(pwd)/harbor-config:/root/.config/harbor-cli \
                       registry.goharbor.io/harbor-cli/harbor-cli:latest \
                       artifact scan start ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
+
+                    rm -rf harbor-config
                     '''
                 }
             }
