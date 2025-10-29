@@ -66,20 +66,20 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                     sh '''
-                    docker volume create harbor-cli-config
+                    mkdir -p harbor-config
+                    cat > harbor-config/config.yaml <<EOF
+                    credential-store:
+                      jenkins-creds:
+                        url: ${HARBOR_URL}
+                        username: $HARBOR_USER
+                        password: $HARBOR_PASS
+                    current-credential-name: jenkins-creds
+                    EOF
 
                     docker run --rm \
-                      -v harbor-cli-config:/root/.config/harbor \
+                      -v $(pwd)/harbor-config:/root/.config/harbor \
                       registry.goharbor.io/harbor-cli/harbor-cli:latest \
-                      configure new --name ${CRED_NAME} \
-                      --url ${HARBOR_URL} \
-                      --username $HARBOR_USER \
-                      --password $HARBOR_PASS
-
-                    docker run --rm \
-                      -v harbor-cli-config:/root/.config/harbor \
-                      registry.goharbor.io/harbor-cli/harbor-cli:latest \
-                      artifact scan start ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} --credential-name ${CRED_NAME}
+                      artifact scan start ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
                     '''
                 }
             }
@@ -97,9 +97,9 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                     sh '''
                     docker run --rm \
-                      -v harbor-cli-config:/root/.config/harbor \
+                      -v $(pwd)/harbor-config:/root/.config/harbor \
                       registry.goharbor.io/harbor-cli/harbor-cli:latest \
-                      artifact scan get ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} --credential-name ${CRED_NAME} > trivy_report.txt
+                      artifact scan get ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} > trivy_report.txt
                     '''
                 }
                 archiveArtifacts artifacts: 'trivy_report.txt', fingerprint: true
