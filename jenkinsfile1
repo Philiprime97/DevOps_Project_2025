@@ -6,7 +6,8 @@ pipeline {
         HARBOR_PROJECT   = 'devops'
         IMAGE_NAME       = 'myapp-b'
         IMAGE_TAG        = '1'
-        CREDENTIALS_ID   = 'devops-test' // your Jenkins credentials ID
+        CREDENTIALS_ID   = 'devops-test' // Jenkins credentials ID
+        CRED_NAME        = 'jenkins-creds' // Harbor CLI credential name
     }
 
     stages {
@@ -27,7 +28,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                    cd docker &&
+                    cd docker && \
                     docker build -t ${HARBOR_URL.replace('http://', '')}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} .
                     """
                 }
@@ -65,12 +66,20 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                     sh '''
+                    docker volume create harbor-cli-config
+
                     docker run --rm \
-                      -e HARBOR_URL="${HARBOR_URL}" \
-                      -e HARBOR_USERNAME="$HARBOR_USER" \
-                      -e HARBOR_PASSWORD="$HARBOR_PASS" \
+                      -v harbor-cli-config:/root/.config/harbor \
                       registry.goharbor.io/harbor-cli/harbor-cli:latest \
-                      artifact scan start ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
+                      configure new --name ${CRED_NAME} \
+                      --url ${HARBOR_URL} \
+                      --username $HARBOR_USER \
+                      --password $HARBOR_PASS
+
+                    docker run --rm \
+                      -v harbor-cli-config:/root/.config/harbor \
+                      registry.goharbor.io/harbor-cli/harbor-cli:latest \
+                      artifact scan start ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} --credential-name ${CRED_NAME}
                     '''
                 }
             }
@@ -88,18 +97,16 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                     sh '''
                     docker run --rm \
-                      -e HARBOR_URL="${HARBOR_URL}" \
-                      -e HARBOR_USERNAME="$HARBOR_USER" \
-                      -e HARBOR_PASSWORD="$HARBOR_PASS" \
+                      -v harbor-cli-config:/root/.config/harbor \
                       registry.goharbor.io/harbor-cli/harbor-cli:latest \
-                      artifact scan get ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} > trivy_report.txt
+                      artifact scan get ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} --credential-name ${CRED_NAME} > trivy_report.txt
                     '''
                 }
                 archiveArtifacts artifacts: 'trivy_report.txt', fingerprint: true
             }
         }
 
-    } 
+    }
 
     post {
         always {
@@ -113,5 +120,4 @@ pipeline {
             echo "❌ Build failed. Check logs above."
         }
     }
-
-} // end of pipeline
+}
