@@ -63,28 +63,27 @@ pipeline {
         }
 
         stage('Trigger Harbor Trivy Scan') {
-          steps {
-            withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
-              sh '''
-              mkdir -p harbor-config
-              cat > harbor-config/config.yaml <<EOF
-        credential-store:
-          jenkins-creds:
-            url: "${HARBOR_URL}"
-            username: "$HARBOR_USER"
-            password: "$HARBOR_PASS"
-        current-credential-name: jenkins-creds
-        EOF
-        
-              docker run --rm \
-                -v $(pwd)/harbor-config:/root/.config/harbor-cli \
-                registry.goharbor.io/harbor-cli/harbor-cli:latest \
-                artifact scan start ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
-              '''
-            }
-          }
-        }
+            steps {
+                withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
+                    sh '''
+mkdir -p harbor-config
+cat > harbor-config/config.yaml <<EOF
+credential-store:
+  jenkins-creds:
+    url: "${HARBOR_URL}"
+    username: "$HARBOR_USER"
+    password: "$HARBOR_PASS"
+current-credential-name: jenkins-creds
+EOF
 
+docker run --rm \
+  -v $(pwd)/harbor-config:/root/.config/harbor-cli \
+  registry.goharbor.io/harbor-cli/harbor-cli:latest \
+  artifact scan start ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
+                    '''
+                }
+            }
+        }
 
         stage('Wait for Scan Completion') {
             steps {
@@ -97,11 +96,11 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                     sh '''
-                    docker run --rm \
-                      -v $(pwd)/harbor-config:/root/.config/harbor-cli \
-                      registry.goharbor.io/harbor-cli/harbor-cli:latest \
-                      artifact view ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} \
-                      --output-format yaml > trivy_report.txt
+docker run --rm \
+  -v $(pwd)/harbor-config:/root/.config/harbor-cli \
+  registry.goharbor.io/harbor-cli/harbor-cli:latest \
+  artifact view ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} \
+  --output-format yaml > trivy_report.txt
                     '''
                 }
                 archiveArtifacts artifacts: 'trivy_report.txt', fingerprint: true
