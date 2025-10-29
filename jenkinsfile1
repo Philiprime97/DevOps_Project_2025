@@ -100,10 +100,10 @@ pipeline {
                       -v $(pwd)/harbor-config:/root/.config/harbor-cli \
                       registry.goharbor.io/harbor-cli/harbor-cli:latest \
                       artifact get ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} \
-                      --output-format yaml > trivy_report.txt
+                      --output-format yaml > trivy_report.yaml
                     '''
                 }
-                archiveArtifacts artifacts: 'trivy_report.txt', fingerprint: true
+                archiveArtifacts artifacts: 'trivy_report.yaml', fingerprint: true
             }
         }
 
