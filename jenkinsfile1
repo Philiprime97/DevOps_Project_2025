@@ -77,7 +77,7 @@ pipeline {
                     docker run --rm \
                       -v $(pwd)/harbor-config:/root/.config/harbor-cli \
                       registry.goharbor.io/harbor-cli/harbor-cli:latest \
-                      artifact scan start ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
+                      artifact scan run ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
                     '''
                 }
             }
