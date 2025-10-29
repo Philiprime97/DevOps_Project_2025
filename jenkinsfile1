@@ -71,7 +71,7 @@ pipeline {
                       -e HARBOR_USERNAME="$HARBOR_USER" \
                       -e HARBOR_PASSWORD="$HARBOR_PASS" \
                       registry.goharbor.io/harbor-cli/harbor-cli:latest \
-                      artifact scan trigger ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
+                      artifact scan start ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
                     '''
                 }
             }
