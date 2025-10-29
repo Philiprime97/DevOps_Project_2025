@@ -70,7 +70,7 @@ pipeline {
                       -e HARBOR_URL="${HARBOR_URL}" \
                       -e HARBOR_USERNAME="$HARBOR_USER" \
                       -e HARBOR_PASSWORD="$HARBOR_PASS" \
-                      registry.goharbor.io/harbor/harbor-cli:v2.8.0 \
+                      registry.goharbor.io/harbor/harbor-cli:latest \
                       artifact scan trigger ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
                     '''
                 }
@@ -86,7 +86,7 @@ pipeline {
                         -e HARBOR_URL="${HARBOR_URL}" \
                         -e HARBOR_USERNAME="$HARBOR_USER" \
                         -e HARBOR_PASSWORD="$HARBOR_PASS" \
-                        registry.goharbor.io/harbor/harbor-cli:v2.8.0 \
+                        registry.goharbor.io/harbor/harbor-cli:latest \
                         artifact scan get ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} > trivy_report.txt
                     '''
                 }
