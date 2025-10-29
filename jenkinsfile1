@@ -97,10 +97,10 @@ pipeline {
                     # Get scan status and output to file
                     curl -s -u $HARBOR_USER:$HARBOR_PASS \
                          "http://${HARBOR_URL}/api/v2.0/projects/${HARBOR_PROJECT}/repositories/${IMAGE_NAME}/artifacts/${IMAGE_TAG}/scan" \
-                         -o trivy_report.json
+                         -o trivy_report.txt
                     '''
                 }
-                archiveArtifacts artifacts: 'trivy_report.json', fingerprint: true
+                archiveArtifacts artifacts: 'trivy_report.txt', fingerprint: true
             }
         }
 
