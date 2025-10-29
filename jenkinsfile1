@@ -69,7 +69,6 @@ pipeline {
                     docker run --rm \
                       registry.goharbor.io/harbor-cli/harbor-cli:latest \
                       artifact scan start ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} \
-                      --username "$HARBOR_USER" --password "$HARBOR_PASS" --url "${HARBOR_URL}"
                     '''
                 }
             }
@@ -83,7 +82,7 @@ pipeline {
                     docker run --rm \
                       registry.goharbor.io/harbor-cli/harbor-cli:latest \
                       artifact scan get ${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} \
-                      --username "$HARBOR_USER" --password "$HARBOR_PASS" --url "${HARBOR_URL}" > trivy_report.txt
+                      > trivy_report.txt
                     '''
                 }
                 archiveArtifacts artifacts: 'trivy_report.txt', fingerprint: true
