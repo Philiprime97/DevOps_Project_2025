@@ -37,7 +37,7 @@ pipeline {
                         echo '🔒 Scanning source code with Trivy and generating HTML...'
                         sh '''
                         wget -q -O html.tpl https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl
-                        trivy fs . --severity HIGH,CRITICAL --format template --template "@html.tpl" -o trivy-source-report.html || true
+                        trivy fs . --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL --format template --template "@html.tpl" -o trivy-source-report.html || true
                         '''
                         archiveArtifacts artifacts: 'trivy-source-report.html', fingerprint: true
                     }
@@ -62,7 +62,7 @@ pipeline {
                 sh '''
                 wget -q -O html.tpl https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl
                 IMAGE_FULL="${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
-                trivy image --severity HIGH,CRITICAL --format template --template "@html.tpl" -o trivy-image-report.html "$IMAGE_FULL" || true
+                trivy image --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL --format template --template "@html.tpl" -o trivy-image-report.html "$IMAGE_FULL" || true
                 '''
                 archiveArtifacts artifacts: 'trivy-image-report.html', fingerprint: true
             }
