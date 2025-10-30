@@ -49,7 +49,7 @@ pipeline {
                         trivy fs . --severity HIGH,CRITICAL --format csv -o trivy-report.csv || true
                         cat trivy-report.txt
                         '''
-                        archiveArtifacts artifacts: 'trivy-report.txt', fingerprint: true
+                        archiveArtifacts artifacts: 'trivy-report.csv', fingerprint: true
                     }
                 }
 
