@@ -39,21 +39,21 @@ pipeline {
                         # Ensure UTF-8 locale for proper table/HTML output
                         export LC_ALL=C.UTF-8
                 
-                        # 1️⃣ Scan source code to JSON
+                        // 1️⃣ Scan source code to JSON
                         trivy fs . --severity HIGH,CRITICAL --format json -o trivy-report.json || true
                 
-                        # 2️⃣ Convert JSON to HTML
+                        // 2️⃣ Convert JSON to HTML
                         trivy convert \
                             --format template \
                             --template "@https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl" \
                             --output trivy-report.html \
                             trivy-report.json || true
                 
-                        # 3️⃣ Optional: CSV output for Jenkins console preview
+                        // 3️⃣ Optional: CSV output for Jenkins console preview
                         trivy fs . --severity HIGH,CRITICAL --format csv -o trivy-report.csv || true
                         '''
                 
-                        # Archive all reports
+                        // Archive all reports
                         archiveArtifacts artifacts: 'trivy-report.json, trivy-report.csv, trivy-report.html', fingerprint: true
                     }
                 }
