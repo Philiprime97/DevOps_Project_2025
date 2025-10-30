@@ -46,7 +46,7 @@ pipeline {
                             reportFiles: 'trivy-source-report.html',
                             reportName: 'Trivy Source Scan Report',
                             keepAll: true,
-                            alwaysLinkToLastBuild: true
+                            alwaysLinkToLastBuild: true,
                             allowMissing: true
                         ])
                     }
@@ -79,7 +79,7 @@ pipeline {
                     reportFiles: 'trivy-image-report.html',
                     reportName: 'Trivy Docker Image Scan Report',
                     keepAll: true,
-                    alwaysLinkToLastBuild: true
+                    alwaysLinkToLastBuild: true,
                     allowMissing: true
                 ])
             }
