@@ -2,9 +2,10 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME     = 'philiprime97/myapp-b'   // Replace with your Docker Hub repo name
-        IMAGE_TAG      = 'v1'                     // Change version as needed
-        CREDENTIALS_ID = 'dockerhub'              // Jenkins credentials ID for Docker Hub (username/password)
+        IMAGE_NAME     = 'philiprime97/myapp-b'   // Your Docker Hub repo
+        IMAGE_TAG      = 'v1'                     // Image tag version
+        CREDENTIALS_ID = 'dockerhub'              // Jenkins Docker Hub credentials ID
+        HTML_TEMPLATE  = 'https://raw.githubusercontent.com/Philiprime97/DevOps_Project_2025/main/html.tpl'
     }
 
     stages {
@@ -21,6 +22,19 @@ pipeline {
             }
         }
 
+        stage('Source Code Scan (Trivy FS)') {
+            steps {
+                echo '🔒 Scanning source code with Trivy...'
+                sh '''
+                wget -q -O html.tpl ${HTML_TEMPLATE}
+                trivy fs . --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL \
+                    --format template --template "@html.tpl" \
+                    -o trivy-source-report.html || true
+                '''
+                archiveArtifacts artifacts: 'trivy-source-report.html', fingerprint: true
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -29,6 +43,19 @@ pipeline {
                     docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
                     """
                 }
+            }
+        }
+
+        stage('Image Scan (Trivy Image)') {
+            steps {
+                echo '🔒 Scanning Docker image with Trivy...'
+                sh '''
+                wget -q -O html.tpl ${HTML_TEMPLATE}
+                trivy image --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL \
+                    --format template --template "@html.tpl" \
+                    -o trivy-image-report.html ${IMAGE_NAME}:${IMAGE_TAG} || true
+                '''
+                archiveArtifacts artifacts: 'trivy-image-report.html', fingerprint: true
             }
         }
 
@@ -51,18 +78,31 @@ pipeline {
                 }
             }
         }
+
+        stage('Publish Reports') {
+            steps {
+                publishHTML([
+                    reportDir: '.',
+                    reportFiles: 'trivy-source-report.html,trivy-image-report.html',
+                    reportName: 'Trivy Scan Reports',
+                    allowMissing: true,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true
+                ])
+            }
+        }
     }
 
     post {
         always {
-            echo "🧹 Cleaning up local image..."
+            echo "🧹 Cleaning up local images..."
             sh 'docker rmi ${IMAGE_NAME}:${IMAGE_TAG} || true'
         }
         success {
-            echo "✅ Successfully pushed ${IMAGE_NAME}:${IMAGE_TAG} to Docker Hub"
+            echo "✅ Successfully scanned and pushed ${IMAGE_NAME}:${IMAGE_TAG} to Docker Hub"
         }
         failure {
-            echo "❌ Build or push failed. Check the logs."
+            echo "❌ Build failed. Check logs and Trivy reports."
         }
     }
 }
