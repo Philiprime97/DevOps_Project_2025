@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE_NAME     = 'philiprime97/myapp-b'   // Your Docker Hub repo
-        IMAGE_TAG      = 'v2'                     // Image tag version
+        IMAGE_TAG      = 'v1'                     // Image tag version
         CREDENTIALS_ID = 'dockerhub'              // Jenkins Docker Hub credentials ID
         HTML_TEMPLATE  = 'https://raw.githubusercontent.com/Philiprime97/DevOps_Project_2025/main/html.tpl'
     }
@@ -22,16 +22,35 @@ pipeline {
             }
         }
 
-        stage('Source Code Scan (Trivy FS)') {
-            steps {
-                echo '🔒 Scanning source code with Trivy...'
-                sh '''
-                wget -q -O html.tpl ${HTML_TEMPLATE}
-                trivy fs . --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL \
-                    --format template --template "@html.tpl" \
-                    -o trivy-source-report.html || true
-                '''
-                archiveArtifacts artifacts: 'trivy-source-report.html', fingerprint: true
+        stage('Lint & Security Scan') {
+            parallel {
+
+                stage('Linting') {
+                    steps {
+                        echo '🔍 Running Python lint and Dockerfile checks...'
+                        sh '''
+                        flake8 . > flake8-report.txt || true
+                        if [ -f Dockerfile ]; then
+                            docker run --rm -i hadolint/hadolint < Dockerfile >> flake8-report.txt 2>&1 || echo "Dockerfile issues" >> flake8-report.txt
+                        fi
+                        '''
+                        archiveArtifacts artifacts: 'flake8-report.txt', fingerprint: true
+                    }
+                }
+
+                stage('Scan Source Code') {
+                    steps {
+                        echo '🔒 Scanning source code with Trivy and generating HTML...'
+                        sh '''
+                        wget -q -O html.tpl ${HTML_TEMPLATE}
+                        trivy fs . --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL \
+                            --format template --template "@html.tpl" \
+                            -o trivy-source-report.html || true
+                        '''
+                        archiveArtifacts artifacts: 'trivy-source-report.html', fingerprint: true
+                    }
+                }
+
             }
         }
 
