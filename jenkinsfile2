@@ -36,7 +36,7 @@ pipeline {
                     steps {
                         echo '🔒 Scanning source code with Trivy and generating HTML...'
                         sh '''
-                        wget -q -O html.tpl https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl
+                        wget -q -O html.tpl https://raw.githubusercontent.com/Philiprime97/DevOps_Project_2025/main/html.tpl
                         trivy fs . --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL --format template --template "@html.tpl" -o trivy-source-report.html || true
                         '''
                         // Archive and publish as HTML
@@ -61,7 +61,7 @@ pipeline {
             steps {
                 echo '🔒 Scanning Docker image with Trivy and generating HTML...'
                 sh '''
-                wget -q -O html.tpl https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl
+                wget -q -O html.tpl https://raw.githubusercontent.com/Philiprime97/DevOps_Project_2025/main/html.tpl
                 IMAGE_FULL="${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
                 trivy image --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL --format template --template "@html.tpl" -o trivy-image-report.html "$IMAGE_FULL" || true
                 '''
