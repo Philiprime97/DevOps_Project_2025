@@ -32,7 +32,6 @@ pipeline {
                         echo '🧹 Running linting for Python, Shell, and Dockerfile...'
                         sh '''
                         # Python lint
-                        sudo apt install -y flake8
                         flake8 .
 
                         # Dockerfile lint
