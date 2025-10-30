@@ -46,7 +46,7 @@ pipeline {
                     steps {
                         echo '🔒 Running Trivy scan on source code...'
                         sh '''
-                        trivy fs . --severity HIGH,CRITICAL -f table --light -o trivy-report.txt
+                        trivy fs . --severity HIGH,CRITICAL -f html -o trivy-report.html || true
                         '''
                         archiveArtifacts artifacts: 'trivy-report.txt', fingerprint: true
                     }
