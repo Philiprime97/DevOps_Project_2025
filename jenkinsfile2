@@ -36,6 +36,7 @@ pipeline {
                     steps {
                         sh '''
                         trivy fs . --severity HIGH,CRITICAL --format table -o trivy-report.txt || true
+                        cat trivy-report.txt
                         '''
                         archiveArtifacts artifacts: 'trivy-report.txt', fingerprint: true
                     }
@@ -58,6 +59,7 @@ pipeline {
                 sh '''
                 IMAGE_FULL="${HARBOR_URL#http://}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
                 trivy image "$IMAGE_FULL" --severity HIGH,CRITICAL --format table -o trivy-image-report.txt || true
+                cat trivy-image-report.txt
                 '''
                 archiveArtifacts artifacts: 'trivy-image-report.txt', fingerprint: true
             }
