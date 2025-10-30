@@ -1,0 +1,68 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME     = 'philiprime97/myapp-b'   // Replace with your Docker Hub repo name
+        IMAGE_TAG      = 'v1'                     // Change version as needed
+        CREDENTIALS_ID = 'dockerhub'              // Jenkins credentials ID for Docker Hub (username/password)
+    }
+
+    stages {
+
+        stage('Docker Info Check') {
+            steps {
+                sh 'docker info'
+            }
+        }
+
+        stage('Checkout Code') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh """
+                    cd docker && \
+                    docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+                    """
+                }
+            }
+        }
+
+        stage('Login to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                    echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                    '''
+                }
+            }
+        }
+
+        stage('Push Image to Docker Hub') {
+            steps {
+                script {
+                    sh """
+                    docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "🧹 Cleaning up local image..."
+            sh 'docker rmi ${IMAGE_NAME}:${IMAGE_TAG} || true'
+        }
+        success {
+            echo "✅ Successfully pushed ${IMAGE_NAME}:${IMAGE_TAG} to Docker Hub"
+        }
+        failure {
+            echo "❌ Build or push failed. Check the logs."
+        }
+    }
+}
