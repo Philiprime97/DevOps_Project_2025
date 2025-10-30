@@ -39,6 +39,7 @@ pipeline {
                             docker run --rm -i hadolint/hadolint < Dockerfile >> flake8-report.txt 2>&1 || echo "⚠️ Dockerfile issues" >> flake8-report.txt
                         fi
                         '''
+                        archiveArtifacts artifacts: 'flake8-report.txt', fingerprint: true
                     }
                 }
 
@@ -46,10 +47,18 @@ pipeline {
                     steps {
                         echo '🔒 Running Trivy scan on source code...'
                         sh '''
-                        trivy fs . --severity HIGH,CRITICAL --format csv -o trivy-report.csv || true
-                        cat trivy-report.txt
+                        # Scan source code and save JSON
+                        trivy fs . --severity HIGH,CRITICAL --format json -o trivy-report.json || true
+
+                        # Convert JSON to human-readable HTML
+                        trivy convert --format template \
+                          --template https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl \
+                          -o trivy-report.html trivy-report.json
+
+                        # Optional: show table in console
+                        trivy fs . --severity HIGH,CRITICAL --format table || true
                         '''
-                        archiveArtifacts artifacts: 'trivy-report.csv', fingerprint: true
+                        archiveArtifacts artifacts: 'trivy-report.html', fingerprint: true
                     }
                 }
 
@@ -70,10 +79,21 @@ pipeline {
         stage('Scan Docker Image') {
             steps {
                 echo '🔒 Scanning Docker image for vulnerabilities...'
-                sh """
-                trivy image ${HARBOR_URL.replace('http://', '')}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} --severity HIGH,CRITICAL -f table --light -o trivy-image-report.txt
-                """
-                archiveArtifacts artifacts: 'trivy-image-report.txt', fingerprint: true
+                sh '''
+                # Scan Docker image and save JSON
+                trivy image ${HARBOR_URL.replace('http://', '')}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} \
+                  --severity HIGH,CRITICAL --format json -o trivy-image-report.json || true
+
+                # Convert JSON to human-readable HTML
+                trivy convert --format template \
+                  --template https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl \
+                  -o trivy-image-report.html trivy-image-report.json
+
+                # Optional: also print table to console
+                trivy image ${HARBOR_URL.replace('http://', '')}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} \
+                  --severity HIGH,CRITICAL --format table || true
+                '''
+                archiveArtifacts artifacts: 'trivy-image-report.html', fingerprint: true
             }
         }
 
