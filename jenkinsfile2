@@ -92,7 +92,7 @@ pipeline {
             '''
         }
         success {
-            echo "✅ Image pushed and scanned successfully in Harbor: ${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
+            echo "✅ Image pushed and scanned successfully to Harbor: ${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
         }
         failure {
             echo "❌ Build failed. Check logs above."
