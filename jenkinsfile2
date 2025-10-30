@@ -41,6 +41,13 @@ pipeline {
                         '''
                         // Archive and publish as HTML
                         archiveArtifacts artifacts: 'trivy-source-report.html', fingerprint: true
+                        publishHTML([
+                            reportDir: '.',
+                            reportFiles: 'trivy-source-report.html',
+                            reportName: 'Trivy Source Scan Report',
+                            allowMissing: true,
+                            alwaysLinkToLastBuild: true
+                        ])
                     }
                 }
 
