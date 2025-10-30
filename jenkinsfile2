@@ -6,7 +6,6 @@ pipeline {
         HARBOR_PROJECT = 'devops'
         IMAGE_NAME     = 'myapp-c'
         IMAGE_TAG      = '1'
-        CREDENTIALS_ID = 'devops-test'
     }
 
     stages {
