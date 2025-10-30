@@ -36,9 +36,7 @@ pipeline {
                     steps {
                         echo '🔒 Scanning source code with Trivy...'
                         sh '''
-                        # Scan filesystem, export table format
                         trivy fs . --severity HIGH,CRITICAL --format table -o trivy-report.txt || true
-                        # Archive the report
                         cat trivy-report.txt
                         '''
                         archiveArtifacts artifacts: 'trivy-report.txt', fingerprint: true
@@ -50,7 +48,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                IMAGE_FULL="${HARBOR_URL#http://}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
+                IMAGE_FULL="${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
                 cd docker
                 docker build -t "$IMAGE_FULL" .
                 '''
@@ -60,7 +58,7 @@ pipeline {
         stage('Scan Docker Image') {
             steps {
                 sh '''
-                IMAGE_FULL="${HARBOR_URL#http://}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
+                IMAGE_FULL="${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
                 trivy image "$IMAGE_FULL" --severity HIGH,CRITICAL --format table -o trivy-image-report.txt || true
                 cat trivy-image-report.txt
                 '''
@@ -72,8 +70,8 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                     sh '''
-                    IMAGE_FULL="${HARBOR_URL#http://}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
-                    echo $HARBOR_PASS | docker login ${HARBOR_URL} -u $HARBOR_USER --password-stdin
+                    IMAGE_FULL="${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
+                    echo "$HARBOR_PASS" | docker login "$HARBOR_URL" -u "$HARBOR_USER" --password-stdin
                     docker push "$IMAGE_FULL"
                     '''
                 }
@@ -84,7 +82,10 @@ pipeline {
 
     post {
         always {
-            sh "docker rmi ${HARBOR_URL.replace('http://','')}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} || true"
+            sh '''
+            IMAGE_FULL="${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
+            docker rmi "$IMAGE_FULL" || true
+            '''
         }
     }
 }
