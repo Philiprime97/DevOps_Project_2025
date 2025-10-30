@@ -35,10 +35,10 @@ pipeline {
                 stage('Trivy Source Scan') {
                     steps {
                         sh '''
-                        LC_ALL=C.UTF-8 trivy fs . --severity HIGH,CRITICAL --format table -o trivy-report.txt || true
+                        trivy fs . --severity HIGH,CRITICAL --format template -o trivy-report.html --template "@https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl" || true
                         cat trivy-report.txt
                         '''
-                        archiveArtifacts artifacts: 'trivy-report.txt', fingerprint: true
+                        archiveArtifacts artifacts: 'trivy-report.html', fingerprint: true
                     }
                 }
 
