@@ -47,9 +47,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                IMAGE_FULL="${HARBOR_URL#http://}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
-                cd docker
-                docker build -t "$IMAGE_FULL" .
+                cd docker && \
+                docker build -t ${HARBOR_URL.replace('http://', '')}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} .
                 '''
             }
         }
