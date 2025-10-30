@@ -48,7 +48,7 @@ pipeline {
                         sh '''
                         trivy fs . --severity HIGH,CRITICAL -f html -o trivy-report.html || true
                         '''
-                        archiveArtifacts artifacts: 'trivy-report.txt', fingerprint: true
+                        archiveArtifacts artifacts: 'trivy-report.html', fingerprint: true
                     }
                 }
 
