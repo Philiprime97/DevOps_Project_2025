@@ -39,8 +39,6 @@ pipeline {
                         wget -q -O html.tpl https://raw.githubusercontent.com/Philiprime97/DevOps_Project_2025/main/html.tpl
                         trivy fs . --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL --format template --template "@html.tpl" -o trivy-source-report.html || true
                         '''
-                        // Archive and publish as HTML
-                        archiveArtifacts artifacts: 'trivy-source-report.html', fingerprint: true
                         publishHTML([
                             reportDir: '.',
                             reportFiles: 'trivy-source-report.html',
@@ -73,7 +71,6 @@ pipeline {
                 IMAGE_FULL="${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
                 trivy image --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL --format template --template "@html.tpl" -o trivy-image-report.html "$IMAGE_FULL" || true
                 '''
-                archiveArtifacts artifacts: 'trivy-image-report.html', fingerprint: true
                 publishHTML([
                     reportDir: '.',
                     reportFiles: 'trivy-image-report.html',
