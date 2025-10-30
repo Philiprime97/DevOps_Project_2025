@@ -46,7 +46,7 @@ pipeline {
                     steps {
                         echo '🔒 Running Trivy scan on source code...'
                         sh '''
-                        trivy fs . --severity HIGH,CRITICAL > trivy-report.txt
+                        trivy fs . --severity HIGH,CRITICAL -f table --light -o trivy-report.txt
                         '''
                         archiveArtifacts artifacts: 'trivy-report.txt', fingerprint: true
                     }
@@ -70,7 +70,7 @@ pipeline {
             steps {
                 echo '🔒 Scanning Docker image for vulnerabilities...'
                 sh """
-                trivy image ${HARBOR_URL.replace('http://', '')}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} --severity HIGH,CRITICAL > trivy-image-report.txt
+                trivy image ${HARBOR_URL.replace('http://', '')}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} --severity HIGH,CRITICAL -f table --light -o trivy-image-report.txt
                 """
                 archiveArtifacts artifacts: 'trivy-image-report.txt', fingerprint: true
             }
