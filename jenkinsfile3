@@ -46,6 +46,7 @@ pipeline {
                         trivy fs . --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL \
                             --format template --template "@html.tpl" \
                             -o trivy-source-report.html || true
+                        cat trivy-source-report.html
                         '''
                         archiveArtifacts artifacts: 'trivy-source-report.html', fingerprint: true
                     }
@@ -73,6 +74,7 @@ pipeline {
                 trivy image --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL \
                     --format template --template "@html.tpl" \
                     -o trivy-image-report.html ${IMAGE_NAME}:${IMAGE_TAG} || true
+                cat trivy-image-report.html
                 '''
                 archiveArtifacts artifacts: 'trivy-image-report.html', fingerprint: true
             }
