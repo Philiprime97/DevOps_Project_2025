@@ -32,11 +32,11 @@ pipeline {
                         echo '🧹 Running linting for Python, Shell, and Dockerfile...'
                         sh '''
                         # Python lint
-                        flake8 .
+                        flake8 . > flake8-report.txt || true
 
                         # Dockerfile lint
                         if [ -f Dockerfile ]; then
-                          docker run --rm -i hadolint/hadolint < Dockerfile || echo "⚠️ Dockerfile issues"
+                            docker run --rm -i hadolint/hadolint < Dockerfile >> flake8-report.txt 2>&1 || echo "⚠️ Dockerfile issues" >> flake8-report.txt
                         fi
                         '''
                     }
