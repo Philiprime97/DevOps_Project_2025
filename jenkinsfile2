@@ -41,7 +41,7 @@ pipeline {
                         '''
                         archiveArtifacts artifacts: 'trivy-report.txt', fingerprint: true
                     }
-
+                }
             }
         }
 
