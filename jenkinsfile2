@@ -46,6 +46,7 @@ pipeline {
                             reportFiles: 'trivy-source-report.html',
                             reportName: 'Trivy Source Scan Report',
                             allowMissing: true,
+                            keepAll: true,
                             alwaysLinkToLastBuild: true
                         ])
                     }
