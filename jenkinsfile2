@@ -34,14 +34,15 @@ pipeline {
 
                 stage('Scan Source Code') {
                     steps {
-                        echo '🔒 Scanning source code with Trivy...'
+                        echo '🔒 Scanning source code with Trivy and generating HTML...'
                         sh '''
-                        trivy fs . --severity HIGH,CRITICAL --format table -o trivy-report.txt || true
-                        cat trivy-report.txt
+                        wget -q -O html.tpl https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl
+                        trivy fs . --severity HIGH,CRITICAL --format template --template "@html.tpl" -o trivy-source-report.html || true
                         '''
-                        archiveArtifacts artifacts: 'trivy-report.txt', fingerprint: true
+                        archiveArtifacts artifacts: 'trivy-source-report.html', fingerprint: true
                     }
                 }
+
             }
         }
 
@@ -57,12 +58,13 @@ pipeline {
 
         stage('Scan Docker Image') {
             steps {
+                echo '🔒 Scanning Docker image with Trivy and generating HTML...'
                 sh '''
+                wget -q -O html.tpl https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl
                 IMAGE_FULL="${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
-                trivy image "$IMAGE_FULL" --severity HIGH,CRITICAL --format table -o trivy-image-report.txt || true
-                cat trivy-image-report.txt
+                trivy image --severity HIGH,CRITICAL --format template --template "@html.tpl" -o trivy-image-report.html "$IMAGE_FULL" || true
                 '''
-                archiveArtifacts artifacts: 'trivy-image-report.txt', fingerprint: true
+                archiveArtifacts artifacts: 'trivy-image-report.html', fingerprint: true
             }
         }
 
@@ -71,7 +73,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                     sh '''
                     IMAGE_FULL="${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
-                    echo "$HARBOR_PASS" | docker login "$HARBOR_URL" -u "$HARBOR_USER" --password-stdin
+                    echo $HARBOR_PASS | docker login ${HARBOR_URL} -u $HARBOR_USER --password-stdin
                     docker push "$IMAGE_FULL"
                     '''
                 }
