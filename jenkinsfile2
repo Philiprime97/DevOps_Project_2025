@@ -85,10 +85,17 @@ pipeline {
 
     post {
         always {
+            echo "🧹 Cleaning up local images..."
             sh '''
             IMAGE_FULL="${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
             docker rmi "$IMAGE_FULL" || true
             '''
+        }
+        success {
+            echo "✅ Image pushed and scanned successfully in Harbor: ${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
+        }
+        failure {
+            echo "❌ Build failed. Check logs above."
         }
     }
 }
