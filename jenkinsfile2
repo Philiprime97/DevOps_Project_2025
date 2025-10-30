@@ -35,7 +35,7 @@ pipeline {
                 stage('Trivy Source Scan') {
                     steps {
                         sh '''
-                        LANG=C.UTF-8 trivy fs . --severity HIGH,CRITICAL --format table -o trivy-report.txt || true
+                        LC_ALL=C.UTF-8 trivy fs . --severity HIGH,CRITICAL --format table -o trivy-report.txt || true
                         cat trivy-report.txt
                         '''
                         archiveArtifacts artifacts: 'trivy-report.txt', fingerprint: true
