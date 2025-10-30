@@ -41,13 +41,6 @@ pipeline {
                         '''
                         // Archive and publish as HTML
                         archiveArtifacts artifacts: 'trivy-source-report.html', fingerprint: true
-                        publishHTML([
-                            reportDir: '.',
-                            reportFiles: 'trivy-source-report.html',
-                            reportName: 'Trivy Source Scan Report',
-                            keepAll: true,
-                            alwaysLinkToLastBuild: true
-                        ])
                     }
                 }
 
@@ -73,13 +66,6 @@ pipeline {
                 trivy image --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL --format template --template "@html.tpl" -o trivy-image-report.html "$IMAGE_FULL" || true
                 '''
                 archiveArtifacts artifacts: 'trivy-image-report.html', fingerprint: true
-                publishHTML([
-                    reportDir: '.',
-                    reportFiles: 'trivy-image-report.html',
-                    reportName: 'Trivy Docker Image Scan Report',
-                    keepAll: true,
-                    alwaysLinkToLastBuild: true
-                ])
             }
         }
 
