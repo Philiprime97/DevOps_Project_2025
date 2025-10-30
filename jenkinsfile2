@@ -53,7 +53,7 @@ pipeline {
                         trivy fs . --severity HIGH,CRITICAL --format csv -o trivy-report.csv || true
                         '''
                 
-                        # Archive all reports
+                        // Archive all reports
                         archiveArtifacts artifacts: 'trivy-report.json, trivy-report.csv, trivy-report.html', fingerprint: true
                     }
                 }
