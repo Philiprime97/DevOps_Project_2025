@@ -62,11 +62,11 @@
       padding: 0.75em;
       border-bottom: 1px solid #e0e0e0;
       vertical-align: middle;
-      text-align: center; /* <-- center all text */
+      text-align: center;
     }
 
     td.links {
-      text-align: left; /* <-- except links column */
+      text-align: left;
     }
 
     th {
@@ -79,20 +79,23 @@
       background-color: #f9f9f9;
     }
 
-    .severity {
+    /* Severity badges */
+    td.severity {
       font-weight: 600;
       color: #fff;
       padding: 0.3em 0.6em;
       border-radius: 20px;
       display: inline-block;
       font-size: 0.9em;
+      vertical-align: middle;
+      text-align: center;
     }
 
-    .severity-LOW .severity { background-color: var(--low); }
-    .severity-MEDIUM .severity { background-color: var(--medium); }
-    .severity-HIGH .severity { background-color: var(--high); }
-    .severity-CRITICAL .severity { background-color: var(--critical); }
-    .severity-UNKNOWN .severity { background-color: var(--unknown); }
+    tr.severity-LOW td.severity { background-color: var(--low); }
+    tr.severity-MEDIUM td.severity { background-color: var(--medium); }
+    tr.severity-HIGH td.severity { background-color: var(--high); }
+    tr.severity-CRITICAL td.severity { background-color: var(--critical); }
+    tr.severity-UNKNOWN td.severity { background-color: var(--unknown); }
 
     .links a {
       display: block;
