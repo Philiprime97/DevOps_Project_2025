@@ -25,11 +25,41 @@
       color: var(--text);
     }
 
-    h1 {
+    /* Header styling */
+    .report-header {
       text-align: center;
+      margin-bottom: 1.5em;
+    }
+
+    .report-title {
       font-size: 2em;
-      margin-bottom: 1em;
+      font-weight: bold;
       color: var(--primary);
+      margin-bottom: 0.3em;
+    }
+
+    .report-target {
+      display: inline-block;
+      background-color: var(--accent);
+      color: #fff;
+      padding: 0.3em 0.6em;
+      border-radius: 8px;
+      font-size: 1em;
+      margin-bottom: 0.3em;
+    }
+
+    .report-os {
+      display: inline-block;
+      margin-left: 0.5em;
+      font-size: 0.9em;
+      font-weight: normal;
+      color: var(--text);
+    }
+
+    .report-date {
+      font-size: 0.95em;
+      color: var(--high);
+      font-weight: bold;
     }
 
     .report-card {
@@ -149,7 +179,16 @@
 
 <body>
   {{- if . }}
-  <h1>{{- escapeXML (index . 0).Target }} - Trivy Report - {{ now }}</h1>
+  <!-- Pretty header -->
+  <div class="report-header">
+    <h1 class="report-title">Trivy Report</h1>
+    <div class="report-target">
+      {{- escapeXML (index . 0).Target }}
+      <span class="report-os">({{- escapeXML (index . 0).OS }})</span>
+    </div>
+    <div class="report-date">{{ now }}</div>
+  </div>
+
   {{- range . }}
   <div class="report-card">
     <div class="group-header">{{ .Type | toString | escapeXML }}</div>
