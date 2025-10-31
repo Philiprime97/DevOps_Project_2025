@@ -62,11 +62,11 @@
       padding: 0.75em;
       border-bottom: 1px solid #e0e0e0;
       vertical-align: middle;
-      text-align: center; /* <-- center all text */
+      text-align: center;
     }
 
     td.links {
-      text-align: left; /* <-- except links column */
+      text-align: left;
     }
 
     th {
@@ -79,20 +79,27 @@
       background-color: #f9f9f9;
     }
 
-    .severity {
+    /* Severity badges wrapper */
+    td.severity div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
       font-weight: 600;
       color: #fff;
       padding: 0.3em 0.6em;
       border-radius: 20px;
-      display: inline-block;
       font-size: 0.9em;
+      text-align: center;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
     }
 
-    .severity-LOW .severity { background-color: var(--low); }
-    .severity-MEDIUM .severity { background-color: var(--medium); }
-    .severity-HIGH .severity { background-color: var(--high); }
-    .severity-CRITICAL .severity { background-color: var(--critical); }
-    .severity-UNKNOWN .severity { background-color: var(--unknown); }
+    tr.severity-LOW td.severity div { background-color: var(--low); }
+    tr.severity-MEDIUM td.severity div { background-color: var(--medium); }
+    tr.severity-HIGH td.severity div { background-color: var(--high); }
+    tr.severity-CRITICAL td.severity div { background-color: var(--critical); }
+    tr.severity-UNKNOWN td.severity div { background-color: var(--unknown); }
 
     .links a {
       display: block;
@@ -147,6 +154,7 @@
   <div class="report-card">
     <div class="group-header">{{ .Type | toString | escapeXML }}</div>
 
+    <!-- Vulnerabilities Table -->
     {{- if eq (len .Vulnerabilities) 0 }}
     <p><strong>No Vulnerabilities found</strong></p>
     {{- else }}
@@ -163,7 +171,9 @@
       <tr class="severity-{{ escapeXML .Vulnerability.Severity }}">
         <td>{{ escapeXML .PkgName }}</td>
         <td>{{ escapeXML .VulnerabilityID }}</td>
-        <td class="severity">{{ escapeXML .Vulnerability.Severity }}</td>
+        <td class="severity">
+          <div>{{ escapeXML .Vulnerability.Severity }}</div>
+        </td>
         <td>{{ escapeXML .InstalledVersion }}</td>
         <td>{{ escapeXML .FixedVersion }}</td>
         <td class="links" data-more-links="off">
@@ -179,6 +189,7 @@
     </table>
     {{- end }}
 
+    <!-- Misconfigurations Table -->
     {{- if eq (len .Misconfigurations) 0 }}
     <p><strong>No Misconfigurations found</strong></p>
     {{- else }}
@@ -195,7 +206,9 @@
         <td>{{ escapeXML .Type }}</td>
         <td>{{ escapeXML .ID }}</td>
         <td>{{ escapeXML .Title }}</td>
-        <td class="severity">{{ escapeXML .Severity }}</td>
+        <td class="severity">
+          <div>{{ escapeXML .Severity }}</div>
+        </td>
         <td>
           {{ escapeXML .Message }}<br>
           <a href={{ escapeXML .PrimaryURL | printf "%q" }} target="_blank">{{ escapeXML .PrimaryURL }}</a>
