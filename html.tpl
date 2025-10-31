@@ -49,6 +49,7 @@
       padding: 10px;
       border-radius: 8px;
       margin-bottom: 10px;
+      text-align: center;
     }
 
     table {
@@ -60,8 +61,12 @@
     th, td {
       padding: 0.75em;
       border-bottom: 1px solid #e0e0e0;
-      text-align: left;
       vertical-align: top;
+    }
+
+    .centered-row th,
+    .centered-row td {
+      text-align: center;
     }
 
     th {
@@ -147,7 +152,7 @@
       <p><strong>No Vulnerabilities found</strong></p>
     {{- else }}
       <table>
-        <tr>
+        <tr class="centered-row">
           <th>Package</th>
           <th>Vulnerability ID</th>
           <th>Severity</th>
@@ -156,7 +161,7 @@
           <th>Links</th>
         </tr>
         {{- range .Vulnerabilities }}
-        <tr class="severity-{{ escapeXML .Vulnerability.Severity }}">
+        <tr class="severity-{{ escapeXML .Vulnerability.Severity }} centered-row">
           <td>{{ escapeXML .PkgName }}</td>
           <td>{{ escapeXML .VulnerabilityID }}</td>
           <td class="severity">{{ escapeXML .Vulnerability.Severity }}</td>
