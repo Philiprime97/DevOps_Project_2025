@@ -2,13 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>
-    {{- if . }}
-      {{- escapeXML (index . 0).Target }} - Trivy Report
-    {{- else }}
-      Trivy Report
-    {{- end }}
-  </title>
+  <title>{{- if . }}{{- escapeXML (index . 0).Target }} - Trivy Report - {{ now }}{{- else }}Trivy Report{{- end }}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
@@ -21,8 +15,6 @@
       --accent: #2196f3;
       --bg: #f0f4f8;
       --text: #333;
-      --header-bg: linear-gradient(90deg, #1976d2, #2196f3);
-      --header-text: #fff;
     }
 
     body {
@@ -33,53 +25,49 @@
       color: var(--text);
     }
 
-    h1 {
+    .header {
       text-align: center;
-      font-size: 2.2em;
-      margin-bottom: 0.2em;
+      margin-bottom: 2em;
+    }
+
+    .header h1 {
+      font-size: 2em;
+      margin: 0;
       color: var(--primary);
       font-weight: 700;
     }
 
-    h2 {
-      text-align: center;
+    .header h2 {
+      font-size: 1em;
+      margin: 0.2em 0 0 0;
       color: var(--accent);
-      margin-bottom: 2em;
       font-weight: 500;
-      font-size: 1.2em;
     }
 
     .report-card {
       background: #fff;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       margin: 20px auto;
       padding: 20px;
       max-width: 1200px;
-      transition: transform 0.2s ease;
-    }
-
-    .report-card:hover {
-      transform: translateY(-5px);
     }
 
     .group-header {
-      font-size: 1.6em;
+      font-size: 1.5em;
       font-weight: bold;
-      color: var(--header-text);
-      background: var(--header-bg);
-      padding: 12px 15px;
+      color: #fff;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      padding: 10px;
       border-radius: 8px;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
-      font-size: 0.95em;
     }
 
     th, td {
@@ -89,36 +77,34 @@
       text-align: center;
     }
 
+    td.links {
+      text-align: left;
+    }
+
     th {
       background-color: var(--accent);
       color: #fff;
       font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-
-    td.links {
-      text-align: left;
     }
 
     tr:hover {
       background-color: #f9f9f9;
     }
 
-    /* Severity badges */
+    /* Severity badges wrapper */
     td.severity div {
       display: flex;
       justify-content: center;
       align-items: center;
       font-weight: 600;
       color: #fff;
-      padding: 0.4em 0.7em;
+      padding: 0.3em 0.6em;
       border-radius: 20px;
       font-size: 0.9em;
       text-align: center;
       width: 100%;
       height: 100%;
       box-sizing: border-box;
-      box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15);
     }
 
     tr.severity-LOW td.severity div { background-color: var(--low); }
@@ -154,7 +140,7 @@
 
     @media (max-width: 768px) {
       table, th, td {
-        font-size: 0.85em;
+        font-size: 0.9em;
       }
     }
   </style>
@@ -175,9 +161,10 @@
 
 <body>
   {{- if . }}
-  <!-- Show full target string as page header -->
-  <h1>{{- escapeXML (index . 0).Target }}</h1>
-  <h2>Trivy Report - {{ now }}</h2>
+  <div class="header">
+    <h1>{{- escapeXML (index . 0).Target }}</h1>
+    <h2>Trivy Report - {{ now }}</h2>
+  </div>
 
   {{- range . }}
   <div class="report-card">
