@@ -3,97 +3,126 @@
 <head>
   <meta charset="UTF-8">
   <title>{{- if . }}{{- escapeXML (index . 0).Target }} - Trivy Report - {{ now }}{{- else }}Trivy Report{{- end }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    :root {
+      --low: #66bb6a;
+      --medium: #fbc02d;
+      --high: #ff9800;
+      --critical: #d32f2f;
+      --unknown: #9e9e9e;
+      --primary: #1976d2;
+      --accent: #2196f3;
+      --bg: #f0f4f8;
+      --text: #333;
+    }
+
     body {
-      font-family: Arial, Helvetica, sans-serif;
-      background-color: #f5f5f5;
-      margin: 20px;
-      color: #333;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      margin: 0;
+      padding: 20px;
+      color: var(--text);
     }
 
     h1 {
       text-align: center;
-      color: #222;
+      font-size: 2em;
       margin-bottom: 1em;
+      color: var(--primary);
+    }
+
+    .report-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin: 20px auto;
+      padding: 20px;
+      max-width: 1200px;
+    }
+
+    .group-header {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #fff;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
     }
 
     table {
+      width: 100%;
       border-collapse: collapse;
-      width: 90%;
-      margin: 0 auto 2em auto;
-      background-color: #fff;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-top: 10px;
     }
 
     th, td {
-      border: 1px solid #ccc;
-      padding: 0.5em;
+      padding: 0.75em;
+      border-bottom: 1px solid #e0e0e0;
       text-align: left;
       vertical-align: top;
     }
 
     th {
-      background-color: #007acc;
+      background-color: var(--accent);
       color: #fff;
+      font-weight: 600;
     }
 
-    .group-header th {
-      background-color: #005a99;
-      font-size: 1.5em;
-      text-align: center;
-    }
-
-    .sub-header th {
-      background-color: #0094ff;
-      font-size: 1.2em;
+    tr:hover {
+      background-color: #f9f9f9;
     }
 
     .severity {
-      font-weight: bold;
-      text-align: center;
+      font-weight: 600;
       color: #fff;
-      padding: 0.2em 0.5em;
-      border-radius: 4px;
+      padding: 0.3em 0.6em;
+      border-radius: 20px;
       display: inline-block;
-      min-width: 60px;
+      font-size: 0.9em;
     }
 
-    .severity-LOW .severity { background-color: #5fbb31; }
-    .severity-MEDIUM .severity { background-color: #e9c600; }
-    .severity-HIGH .severity { background-color: #ff8800; }
-    .severity-CRITICAL .severity { background-color: #e40000; }
-    .severity-UNKNOWN .severity { background-color: #747474; }
+    .severity-LOW .severity { background-color: var(--low); }
+    .severity-MEDIUM .severity { background-color: var(--medium); }
+    .severity-HIGH .severity { background-color: var(--high); }
+    .severity-CRITICAL .severity { background-color: var(--critical); }
+    .severity-UNKNOWN .severity { background-color: var(--unknown); }
 
     .links a {
       display: block;
-      color: #007acc;
+      color: var(--primary);
       text-decoration: none;
-      margin-bottom: 0.2em;
-      word-break: break-all;
+      margin-bottom: 0.3em;
+      word-break: break-word;
+      transition: color 0.2s ease;
     }
 
     .links a:hover {
+      color: #0d47a1;
       text-decoration: underline;
     }
 
     a.toggle-more-links {
       cursor: pointer;
-      color: #ff6600;
+      color: var(--high);
       font-weight: bold;
-    }
-
-    td.pkg-name, td.pkg-version, td.misconf-type, td.misconf-check {
-      white-space: nowrap;
+      font-size: 0.9em;
     }
 
     td.links[data-more-links="off"] a:nth-of-type(n+5) {
       display: none;
     }
+
+    @media (max-width: 768px) {
+      table, th, td {
+        font-size: 0.9em;
+      }
+    }
   </style>
 
   <script>
     window.onload = function() {
-      // Toggle "more links" visibility
       document.querySelectorAll('a.toggle-more-links').forEach(function(toggleLink) {
         toggleLink.onclick = function() {
           var parent = toggleLink.parentElement;
@@ -110,27 +139,28 @@
 {{- if . }}
   <h1>{{- escapeXML (index . 0).Target }} - Trivy Report - {{ now }}</h1>
 
-  <table>
   {{- range . }}
-    <tr class="group-header"><th colspan="6">{{ .Type | toString | escapeXML }}</th></tr>
+  <div class="report-card">
+    <div class="group-header">{{ .Type | toString | escapeXML }}</div>
 
     {{- if eq (len .Vulnerabilities) 0 }}
-      <tr><th colspan="6">No Vulnerabilities found</th></tr>
+      <p><strong>No Vulnerabilities found</strong></p>
     {{- else }}
-      <tr class="sub-header">
-        <th>Package</th>
-        <th>Vulnerability ID</th>
-        <th>Severity</th>
-        <th>Installed Version</th>
-        <th>Fixed Version</th>
-        <th>Links</th>
-      </tr>
-      {{- range .Vulnerabilities }}
+      <table>
+        <tr>
+          <th>Package</th>
+          <th>Vulnerability ID</th>
+          <th>Severity</th>
+          <th>Installed Version</th>
+          <th>Fixed Version</th>
+          <th>Links</th>
+        </tr>
+        {{- range .Vulnerabilities }}
         <tr class="severity-{{ escapeXML .Vulnerability.Severity }}">
-          <td class="pkg-name">{{ escapeXML .PkgName }}</td>
+          <td>{{ escapeXML .PkgName }}</td>
           <td>{{ escapeXML .VulnerabilityID }}</td>
           <td class="severity">{{ escapeXML .Vulnerability.Severity }}</td>
-          <td class="pkg-version">{{ escapeXML .InstalledVersion }}</td>
+          <td>{{ escapeXML .InstalledVersion }}</td>
           <td>{{ escapeXML .FixedVersion }}</td>
           <td class="links" data-more-links="off">
             {{- range .Vulnerability.References }}
@@ -141,36 +171,37 @@
             {{- end }}
           </td>
         </tr>
-      {{- end }}
+        {{- end }}
+      </table>
     {{- end }}
 
     {{- if eq (len .Misconfigurations) 0 }}
-      <tr><th colspan="6">No Misconfigurations found</th></tr>
+      <p><strong>No Misconfigurations found</strong></p>
     {{- else }}
-      <tr class="sub-header">
-        <th>Type</th>
-        <th>Misconf ID</th>
-        <th>Check</th>
-        <th>Severity</th>
-        <th>Message</th>
-      </tr>
-      {{- range .Misconfigurations }}
+      <table>
+        <tr>
+          <th>Type</th>
+          <th>Misconf ID</th>
+          <th>Check</th>
+          <th>Severity</th>
+          <th>Message</th>
+        </tr>
+        {{- range .Misconfigurations }}
         <tr class="severity-{{ escapeXML .Severity }}">
-          <td class="misconf-type">{{ escapeXML .Type }}</td>
+          <td>{{ escapeXML .Type }}</td>
           <td>{{ escapeXML .ID }}</td>
-          <td class="misconf-check">{{ escapeXML .Title }}</td>
+          <td>{{ escapeXML .Title }}</td>
           <td class="severity">{{ escapeXML .Severity }}</td>
-          <td style="white-space: normal;">
-            {{ escapeXML .Message }}
-            <br>
+          <td>
+            {{ escapeXML .Message }}<br>
             <a href={{ escapeXML .PrimaryURL | printf "%q" }} target="_blank">{{ escapeXML .PrimaryURL }}</a>
           </td>
         </tr>
-      {{- end }}
+        {{- end }}
+      </table>
     {{- end }}
-
+  </div>
   {{- end }}
-  </table>
 {{- else }}
   <h1>Trivy Returned Empty Report</h1>
 {{- end }}
