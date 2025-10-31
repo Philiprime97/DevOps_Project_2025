@@ -61,12 +61,12 @@
     th, td {
       padding: 0.75em;
       border-bottom: 1px solid #e0e0e0;
-      vertical-align: top;
+      vertical-align: middle;
+      text-align: center; /* <-- center all text */
     }
 
-    .centered-row th,
-    .centered-row td {
-      text-align: center;
+    td.links {
+      text-align: left; /* <-- except links column */
     }
 
     th {
@@ -141,75 +141,73 @@
 </head>
 
 <body>
-{{- if . }}
+  {{- if . }}
   <h1>{{- escapeXML (index . 0).Target }} - Trivy Report - {{ now }}</h1>
-
   {{- range . }}
   <div class="report-card">
     <div class="group-header">{{ .Type | toString | escapeXML }}</div>
 
     {{- if eq (len .Vulnerabilities) 0 }}
-      <p><strong>No Vulnerabilities found</strong></p>
+    <p><strong>No Vulnerabilities found</strong></p>
     {{- else }}
-      <table>
-        <tr class="centered-row">
-          <th>Package</th>
-          <th>Vulnerability ID</th>
-          <th>Severity</th>
-          <th>Installed Version</th>
-          <th>Fixed Version</th>
-          <th>Links</th>
-        </tr>
-        {{- range .Vulnerabilities }}
-        <tr class="severity-{{ escapeXML .Vulnerability.Severity }} centered-row">
-          <td>{{ escapeXML .PkgName }}</td>
-          <td>{{ escapeXML .VulnerabilityID }}</td>
-          <td class="severity">{{ escapeXML .Vulnerability.Severity }}</td>
-          <td>{{ escapeXML .InstalledVersion }}</td>
-          <td>{{ escapeXML .FixedVersion }}</td>
-          <td class="links" data-more-links="off">
-            {{- range .Vulnerability.References }}
-              <a href={{ escapeXML . | printf "%q" }} target="_blank">{{ escapeXML . }}</a>
-            {{- end }}
-            {{- if gt (len .Vulnerability.References) 3 }}
-              <a class="toggle-more-links">Toggle more links</a>
-            {{- end }}
-          </td>
-        </tr>
-        {{- end }}
-      </table>
+    <table>
+      <tr>
+        <th>Package</th>
+        <th>Vulnerability ID</th>
+        <th>Severity</th>
+        <th>Installed Version</th>
+        <th>Fixed Version</th>
+        <th>Links</th>
+      </tr>
+      {{- range .Vulnerabilities }}
+      <tr class="severity-{{ escapeXML .Vulnerability.Severity }}">
+        <td>{{ escapeXML .PkgName }}</td>
+        <td>{{ escapeXML .VulnerabilityID }}</td>
+        <td class="severity">{{ escapeXML .Vulnerability.Severity }}</td>
+        <td>{{ escapeXML .InstalledVersion }}</td>
+        <td>{{ escapeXML .FixedVersion }}</td>
+        <td class="links" data-more-links="off">
+          {{- range .Vulnerability.References }}
+          <a href={{ escapeXML . | printf "%q" }} target="_blank">{{ escapeXML . }}</a>
+          {{- end }}
+          {{- if gt (len .Vulnerability.References) 3 }}
+          <a class="toggle-more-links">Toggle more links</a>
+          {{- end }}
+        </td>
+      </tr>
+      {{- end }}
+    </table>
     {{- end }}
 
     {{- if eq (len .Misconfigurations) 0 }}
-      <p><strong>No Misconfigurations found</strong></p>
+    <p><strong>No Misconfigurations found</strong></p>
     {{- else }}
-      <table>
-        <tr>
-          <th>Type</th>
-          <th>Misconf ID</th>
-          <th>Check</th>
-          <th>Severity</th>
-          <th>Message</th>
-        </tr>
-        {{- range .Misconfigurations }}
-        <tr class="severity-{{ escapeXML .Severity }}">
-          <td>{{ escapeXML .Type }}</td>
-          <td>{{ escapeXML .ID }}</td>
-          <td>{{ escapeXML .Title }}</td>
-          <td class="severity">{{ escapeXML .Severity }}</td>
-          <td>
-            {{ escapeXML .Message }}<br>
-            <a href={{ escapeXML .PrimaryURL | printf "%q" }} target="_blank">{{ escapeXML .PrimaryURL }}</a>
-          </td>
-        </tr>
-        {{- end }}
-      </table>
+    <table>
+      <tr>
+        <th>Type</th>
+        <th>Misconf ID</th>
+        <th>Check</th>
+        <th>Severity</th>
+        <th>Message</th>
+      </tr>
+      {{- range .Misconfigurations }}
+      <tr class="severity-{{ escapeXML .Severity }}">
+        <td>{{ escapeXML .Type }}</td>
+        <td>{{ escapeXML .ID }}</td>
+        <td>{{ escapeXML .Title }}</td>
+        <td class="severity">{{ escapeXML .Severity }}</td>
+        <td>
+          {{ escapeXML .Message }}<br>
+          <a href={{ escapeXML .PrimaryURL | printf "%q" }} target="_blank">{{ escapeXML .PrimaryURL }}</a>
+        </td>
+      </tr>
+      {{- end }}
+    </table>
     {{- end }}
   </div>
   {{- end }}
-{{- else }}
+  {{- else }}
   <h1>Trivy Returned Empty Report</h1>
-{{- end }}
+  {{- end }}
 </body>
 </html>
-
