@@ -38,8 +38,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       margin: 20px auto;
       padding: 20px;
-      max-width: 900px; /* reduced width for centered layout */
-      text-align: center; /* centers inline text inside */
+      max-width: 1200px;
     }
 
     .group-header {
@@ -54,17 +53,20 @@
     }
 
     table {
-      width: 90%; /* was 100%, now centered */
-      margin: 0 auto; /* center the table */
+      width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
     }
 
     th, td {
-      padding: 0.6em;
+      padding: 0.75em;
       border-bottom: 1px solid #e0e0e0;
       vertical-align: top;
-      text-align: center; /* center text inside cells */
+    }
+
+    .centered-row th,
+    .centered-row td {
+      text-align: center;
     }
 
     th {
@@ -121,9 +123,6 @@
       table, th, td {
         font-size: 0.9em;
       }
-      .report-card {
-        width: 95%;
-      }
     }
   </style>
 
@@ -153,7 +152,7 @@
       <p><strong>No Vulnerabilities found</strong></p>
     {{- else }}
       <table>
-        <tr>
+        <tr class="centered-row">
           <th>Package</th>
           <th>Vulnerability ID</th>
           <th>Severity</th>
@@ -162,7 +161,7 @@
           <th>Links</th>
         </tr>
         {{- range .Vulnerabilities }}
-        <tr class="severity-{{ escapeXML .Vulnerability.Severity }}">
+        <tr class="severity-{{ escapeXML .Vulnerability.Severity }} centered-row">
           <td>{{ escapeXML .PkgName }}</td>
           <td>{{ escapeXML .VulnerabilityID }}</td>
           <td class="severity">{{ escapeXML .Vulnerability.Severity }}</td>
@@ -213,3 +212,4 @@
 {{- end }}
 </body>
 </html>
+
