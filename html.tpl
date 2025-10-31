@@ -15,6 +15,7 @@
       --accent: #2196f3;
       --bg: #f0f4f8;
       --text: #333;
+      --header-bg: linear-gradient(90deg, #1976d2, #2196f3);
     }
 
     body {
@@ -25,49 +26,64 @@
       color: var(--text);
     }
 
+    /* Friendly main header */
     .header {
       text-align: center;
       margin-bottom: 2em;
     }
 
     .header h1 {
-      font-size: 2em;
+      font-size: 2.5em;
       margin: 0;
-      color: var(--primary);
+      color: #fff;
+      background: var(--primary);
+      display: inline-block;
+      padding: 15px 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       font-weight: 700;
     }
 
     .header h2 {
-      font-size: 1em;
-      margin: 0.2em 0 0 0;
+      font-size: 1.1em;
+      margin: 0.5em 0 0 0;
       color: var(--accent);
       font-weight: 500;
     }
 
+    /* Report card styling */
     .report-card {
       background: #fff;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
       margin: 20px auto;
       padding: 20px;
       max-width: 1200px;
+      transition: transform 0.2s ease;
     }
 
+    .report-card:hover {
+      transform: translateY(-5px);
+    }
+
+    /* Group headers */
     .group-header {
-      font-size: 1.5em;
+      font-size: 1.6em;
       font-weight: bold;
       color: #fff;
-      background: linear-gradient(to right, var(--primary), var(--accent));
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 10px;
+      background: var(--header-bg);
+      padding: 12px 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
       text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
+      font-size: 0.95em;
     }
 
     th, td {
@@ -77,34 +93,38 @@
       text-align: center;
     }
 
-    td.links {
-      text-align: left;
-    }
-
     th {
       background-color: var(--accent);
       color: #fff;
       font-weight: 600;
+      font-size: 1em;
+      letter-spacing: 0.5px;
+      box-shadow: inset 0 -1px 0 rgba(0,0,0,0.1);
+    }
+
+    td.links {
+      text-align: left;
     }
 
     tr:hover {
       background-color: #f9f9f9;
     }
 
-    /* Severity badges wrapper */
+    /* Severity badges */
     td.severity div {
       display: flex;
       justify-content: center;
       align-items: center;
       font-weight: 600;
       color: #fff;
-      padding: 0.3em 0.6em;
+      padding: 0.4em 0.8em;
       border-radius: 20px;
       font-size: 0.9em;
       text-align: center;
       width: 100%;
       height: 100%;
       box-sizing: border-box;
+      box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15);
     }
 
     tr.severity-LOW td.severity div { background-color: var(--low); }
@@ -113,6 +133,7 @@
     tr.severity-CRITICAL td.severity div { background-color: var(--critical); }
     tr.severity-UNKNOWN td.severity div { background-color: var(--unknown); }
 
+    /* Links */
     .links a {
       display: block;
       color: var(--primary);
@@ -140,7 +161,7 @@
 
     @media (max-width: 768px) {
       table, th, td {
-        font-size: 0.9em;
+        font-size: 0.85em;
       }
     }
   </style>
