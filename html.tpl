@@ -2,7 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>{{- if . }}{{- escapeXML (index . 0).Target }} - Trivy Report - {{ now }}{{- else }}Trivy Report{{- end }}</title>
+  <title>
+    {{- if . }}
+      {{- .ReportName }} - Trivy Report
+    {{- else }}
+      Trivy Report
+    {{- end }}
+  </title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
@@ -30,9 +36,17 @@
     h1 {
       text-align: center;
       font-size: 2.2em;
-      margin-bottom: 1em;
+      margin-bottom: 0.2em;
       color: var(--primary);
       font-weight: 700;
+    }
+
+    h2 {
+      text-align: center;
+      color: var(--accent);
+      margin-bottom: 2em;
+      font-weight: 500;
+      font-size: 1.2em;
     }
 
     .report-card {
@@ -161,9 +175,11 @@
 
 <body>
   {{- if . }}
-  <h1>{{- escapeXML (index . 0).Target }}</h1>
-  <h2 style="text-align:center; color:var(--accent); margin-bottom:2em;">Trivy Report - {{ now }}</h2>
-  
+  <!-- Report name first -->
+  <h1>{{- .ReportName }}</h1>
+  <!-- Full target string and timestamp -->
+  <h2>{{- escapeXML (index . 0).Target }} - Trivy Report - {{ now }}</h2>
+
   {{- range . }}
   <div class="report-card">
     <div class="group-header">{{ .Type | toString | escapeXML }}</div>
