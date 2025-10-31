@@ -46,14 +46,7 @@
       border-radius: 8px;
       font-size: 1em;
       margin-bottom: 0.3em;
-    }
-
-    .report-os {
-      display: inline-block;
-      margin-left: 0.5em;
-      font-size: 0.9em;
-      font-weight: normal;
-      color: var(--text);
+      word-break: break-word;
     }
 
     .report-date {
@@ -179,12 +172,11 @@
 
 <body>
   {{- if . }}
-  <!-- Pretty header -->
+  <!-- Fixed Pretty header -->
   <div class="report-header">
     <h1 class="report-title">Trivy Report</h1>
     <div class="report-target">
       {{- escapeXML (index . 0).Target }}
-      <span class="report-os">({{- escapeXML (index . 0).OS }})</span>
     </div>
     <div class="report-date">{{ now }}</div>
   </div>
