@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>
     {{- if . }}
-      {{- .ReportName }} - Trivy Report
+      {{- escapeXML (index . 0).Target }} - Trivy Report
     {{- else }}
       Trivy Report
     {{- end }}
@@ -175,10 +175,9 @@
 
 <body>
   {{- if . }}
-  <!-- Report name first -->
-  <h1>{{- .ReportName }}</h1>
-  <!-- Full target string and timestamp -->
-  <h2>{{- escapeXML (index . 0).Target }} - Trivy Report - {{ now }}</h2>
+  <!-- Full target as header -->
+  <h1>{{- escapeXML (index . 0).Target }}</h1>
+  <h2>Trivy Report - {{ now }}</h2>
 
   {{- range . }}
   <div class="report-card">
